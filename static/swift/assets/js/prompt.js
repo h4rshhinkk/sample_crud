@@ -64,8 +64,8 @@ $(document).ready(function() {
                 method: "POST",
                 data: formData,
                 beforeSend: function() {
-                    $("#prompt-submit").attr("disabled", "disabled");
-                    $("#prompt-submit").val("Saving...");
+                    $("#prompt-out-submit").attr("disabled", "disabled");
+                    $("#prompt-out-submit").val("Saving...");
                 },
                 success: function(response) {
                     if (response.status) {                        
@@ -93,8 +93,8 @@ $(document).ready(function() {
                     }                
                 },
                 complete: function() {
-                    $("#prompt-submit").attr("disabled", false);
-                    $("#prompt-submit").val("Save");
+                    $("#prompt-out-submit").attr("disabled", false);
+                    $("#prompt-out-submit").val("Save");
                 },
             });
         },
