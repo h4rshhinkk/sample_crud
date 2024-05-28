@@ -5,7 +5,7 @@ from swift.helper import renderfile, is_ajax, LogUserActivity
 from swift.models import ToolInput,ToolType,ToolTemplateInput,ToolTemplate,ToolKeyword
 from django.http import JsonResponse
 from django.template.loader import render_to_string
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from swift.models import CREATE,  UPDATE, SUCCESS, FAILED, DELETE, READ
 from django.db import transaction
 import pdb
@@ -14,78 +14,97 @@ import pdb
 
 class ToolTemplateView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        context, response = {}, {}
+        context = {
+            'form': ToolTemplateForm(),
+            'inp_form': ToolInputForm()
+        }
         
-        if is_ajax(request=request):
-            response['status'] = True
-            response['template'] = render_to_string('swift/tooltemplate/tool_template_form.html', context, request=request)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            response = {
+                'status': True,
+                'template': render_to_string('swift/tooltemplate/tool_template_form.html', context, request=request)
+            }
             return JsonResponse(response)
-        context['form']  = ToolTemplateForm()
-        context['inp_form'] = ToolInputForm()
-        return renderfile(request, 'tooltemplate', 'index', context)
-    
-class ToolTemplateCreate(LoginRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
-        data = {}
-        form = ToolTemplateForm()
-        context = {'form': form, 'id': 0}
-        data['status'] = True
-        data['template'] = render_to_string('swift/tooltemplate/tool_template_form.html', context, request=request)
-        return JsonResponse(data)
+        
+        return render(request, 'swift/tooltemplate/index.html', context)
 
     def post(self, request, *args, **kwargs):
-        response = {}
-        form = ToolTemplateForm(request.POST or None)
+        form = ToolTemplateForm(request.POST, request.FILES)
+        inp_form = ToolInputForm(request.POST)
         
-        if form.is_valid():
-            try:
-                with transaction.atomic():
-                    name = request.POST.get('name', None)
-                    # CHECK THE DATA EXISTS
-                    if not ToolTemplate.objects.filter(name=name).exists():
-                        obj = ToolTemplate.objects.create(name=name)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            if form.is_valid() and inp_form.is_valid():
+                tool_template_instance = form.save(commit=False)
+                tool_input_instance = inp_form.save(commit=False)
+                tool_type_id = form.cleaned_data['tool_type']
+                tool_input_id = inp_form.cleaned_data['tool_template']
+                tool_type = get_object_or_404(ToolType, pk=tool_type_id)
+                tool_input = get_object_or_404(ToolInput, pk=tool_input_id)
+                tool_template_instance.tool_type = tool_type
+                tool_input_instance.tool_template = tool_input
+                tool_template_instance.save()
+                tool_input_instance.save()
+                form.save()
+                inp_form.save()
+            
+                inputs_data = {
+                    'place_holder': request.POST.getlist('place_holder'),
+                    'description': request.POST.getlist('description')
+                }
 
-                        # log entry
-                        log_data = {}
-                        log_data['module_name'] = 'Curriculum'
-                        log_data['action_type'] = CREATE
-                        log_data['log_message'] = 'Curriculum Created'
-                        log_data['status'] = SUCCESS
-                        log_data['model_object'] = obj
-                        log_data['db_data'] = {'name':name}
-                        log_data['app_visibility'] = True
-                        log_data['web_visibility'] = True
-                        log_data['error_msg'] = ''
-                        log_data['fwd_link'] = '/curriculum/'
-                        LogUserActivity(request, log_data)
+                ToolTemplateInput.objects.create(
+                    tool_template=tool_template_instance,
+                    tool_input=tool_input_instance,
+                    inputs=inputs_data,
+                    validation_message=inp_form.cleaned_data['validation_message'],
+                    sort_order=inp_form.cleaned_data['sort_order']
+                )
 
-                        response['status'] = True
-                        response['message'] = 'Added successfully'
-                    else:
-                        response['status'] = False
-                        response['message'] = 'Curriculum Already exists'
-
-            except Exception as error:
-                log_data = {}
-                log_data['module_name'] = 'Curriculum'
-                log_data['action_type'] = CREATE
-                log_data['log_message'] = 'Curriculum updation failed'
-                log_data['status'] = FAILED
-                log_data['model_object'] = None
-                log_data['db_data'] = {}
-                log_data['app_visibility'] = False
-                log_data['web_visibility'] = False
-                log_data['error_msg'] = error
-                log_data['fwd_link'] = '/curriculum/'
-                LogUserActivity(request, log_data)
-
-                response['status'] = False
-                response['message'] = 'Something went wrong'
+                response = {
+                    'status': True,
+                    'message': 'Form submitted successfully!'
+                }
+            else:
+                response = {
+                    'status': False,
+                    'form_errors': form.errors,
+                    'inp_form_errors': inp_form.errors
+                }
+            return JsonResponse(response)
         else:
-            response['status'] = False
-            context = {'form': form}
-            response['title'] = 'toolss'
-            response['valid_form'] = False
-            response['template'] = render_to_string('swift/tooltemplate/tool_template_form.html', context, request=request)
-        return JsonResponse(response)
+            if form.is_valid() and inp_form.is_valid():
+                tool_template_instance = form.save(commit=False)
+                tool_input_instance = inp_form.save(commit=False)
+                tool_type_id = form.cleaned_data['tool_type']
+                tool_input_id = inp_form.cleaned_data['tool_template']
+                tool_type = get_object_or_404(ToolType, pk=tool_type_id)
+                tool_input = get_object_or_404(ToolInput, pk=tool_input_id)
+                tool_template_instance.tool_type = tool_type
+                tool_input_instance.tool_template = tool_input
+                tool_template_instance.save()
+                tool_input_instance.save()
+                form.save()
+                inp_form.save()
+
+               
+                inputs_data = {
+                    'place_holder': request.POST.getlist('place_holder'),
+                    'description': request.POST.getlist('description')
+                }
+                
+                
+                ToolTemplateInput.objects.create(
+                    tool_template=tool_template_instance,
+                    tool_input=tool_input_instance,
+                    inputs=inputs_data,
+                    validation_message=inp_form.cleaned_data['validation_message'],
+                    sort_order=inp_form.cleaned_data['sort_order']
+                )
+                return redirect('appswift:tooltemplate_create')
+            else:
+                context = {
+                    'form': form,
+                    'inp_form': inp_form
+                }
+                return render(request, 'swift/tooltemplate/index.html', context)
     

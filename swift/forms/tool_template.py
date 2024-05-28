@@ -32,7 +32,7 @@ class ToolTemplateForm(forms.ModelForm):
 
 
 class ToolInputForm(forms.ModelForm):
-    tool_template = forms.ModelChoiceField(queryset=ToolInput.objects.all(),                                                   
+    tool_input = forms.ModelChoiceField(queryset=ToolInput.objects.all(),                                                   
         widget=forms.Select(attrs={"class": "form-control"}),
         required=False,
         label="Tool Input",)
@@ -67,7 +67,7 @@ class ToolInputForm(forms.ModelForm):
 
     class Meta:
         model = ToolTemplateInput
-        fields = ['tool_template','place_holder','description','validation_message','sort_order']
+        fields = ['tool_input','place_holder','description','validation_message','sort_order']
 
 
     def save(self, commit=True):
@@ -79,31 +79,3 @@ class ToolInputForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
-
-
-# class PromptOutForm(forms.ModelForm):
-#     name = forms.CharField(
-#         label='Name',
-#         max_length=150,
-#         required=True,
-#         widget=forms.TextInput(attrs={'autocomplete': 'off'})
-#     )
-#     description = forms.CharField(
-#         label='Description',
-#         required=True,
-#         widget=forms.Textarea(attrs={'rows': 4})
-#     )
-
-#     class Meta:
-#         model = ToolTemplateInput
-#         fields = ['prompt', 'name', 'description']
-
-#     def save(self, commit=True):
-#         instance = super().save(commit=False)
-#         instance.inputs = {
-#             'name': self.cleaned_data['name'],
-#             'description': self.cleaned_data['description']
-#         }
-#         if commit:
-#             instance.save()
-#         return instance
