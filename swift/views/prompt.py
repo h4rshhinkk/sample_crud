@@ -180,13 +180,12 @@ class PromptUpdate(LoginRequiredMixin, View):
 
 class PromptOutCreate(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
+        data = {}
         form = PromptOutForm()
         context = {'form': form, 'id': 0}
-        data = {
-            'status': True,
-            'title': 'Add Prompt Output',
-            'template': render_to_string('swift/prompt/prompt_out_form.html', context, request=request)
-        }
+        data['status'] = True
+        data['title'] = 'Add Prompt Out'
+        data['template'] = render_to_string('swift/prompt/prompt_out_form.html', context, request=request)
         return JsonResponse(data)
 
     def post(self, request, *args, **kwargs):
@@ -196,42 +195,51 @@ class PromptOutCreate(LoginRequiredMixin, View):
             try:
                 with transaction.atomic():
                     obj = form.save()
+                    print(obj,"===obj")
+                    # CHECK THE DATA EXISTS
+                    if not Prompt.objects.filter(name=obj.name).exists():
+                        obj = Prompt.objects.create(name=obj.name)
 
-                    log_data = {
-                        'module_name': 'PromptOutput',
-                        'action_type': CREATE,
-                        'log_message': 'PromptOutput Created',
-                        'status': SUCCESS,
-                        'model_object': obj,
-                        'db_data': obj.text,
-                        'app_visibility': True,
-                        'web_visibility': True,
-                        'error_msg': '',
-                        'fwd_link': '/prompt/'
-                    }
-                    LogUserActivity(request, log_data)
+                        # log entry
+                        log_data = {}
+                        log_data['module_name'] = 'Prompt'
+                        log_data['action_type'] = CREATE
+                        log_data['log_message'] = 'Prompt Created'
+                        log_data['status'] = SUCCESS
+                        log_data['model_object'] = obj
+                        log_data['db_data'] = {'name':obj.name}
+                        log_data['app_visibility'] = True
+                        log_data['web_visibility'] = True
+                        log_data['error_msg'] = ''
+                        log_data['fwd_link'] = '/prompt/'
+                        LogUserActivity(request, log_data)
 
-                    response['status'] = True
-                    response['message'] = 'Added successfully'
+                        response['status'] = True
+                        response['message'] = 'Added successfully'
+                    else:
+                        response['status'] = False
+                        response['message'] = 'Prompt Already exists'
+
             except Exception as error:
-                log_data = {
-                    'module_name': 'PromptOutput',
-                    'action_type': CREATE,
-                    'log_message': 'PromptOutput creation failed',
-                    'status': FAILED,
-                    'model_object': None,
-                    'db_data': {},
-                    'app_visibility': False,
-                    'web_visibility': False,
-                    'error_msg': str(error),
-                    'fwd_link': '/prompt/'
-                }
+                log_data = {}
+                log_data['module_name'] = 'Prompt'
+                log_data['action_type'] = CREATE
+                log_data['log_message'] = 'Prompt updation failed'
+                log_data['status'] = FAILED
+                log_data['model_object'] = None
+                log_data['db_data'] = {}
+                log_data['app_visibility'] = False
+                log_data['web_visibility'] = False
+                log_data['error_msg'] = error
+                log_data['fwd_link'] = '/prompt/'
                 LogUserActivity(request, log_data)
 
                 response['status'] = False
                 response['message'] = 'Something went wrong'
         else:
             response['status'] = False
+            context = {'form': form}
+            response['title'] = 'Edit Prompt'
             response['valid_form'] = False
-            response['template'] = render_to_string('swift/prompt/prompt_out_form.html', {'form': form}, request=request)
+            response['template'] = render_to_string('swift/prompt/prompt_out_form.html', context, request=request)
         return JsonResponse(response)

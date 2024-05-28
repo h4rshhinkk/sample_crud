@@ -99,8 +99,6 @@ $(document).ready(function() {
             });
         },
     });
-
-
 });
 
 function FilterPrompt(page) {
