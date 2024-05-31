@@ -182,7 +182,7 @@
                 if (!showAddButton()) buttonRow.hide();
                 // If a post-add callback was supplied, call it with the added form:
                 if (options.added) options.added(row);
-                
+
                 return false;
             });
         }

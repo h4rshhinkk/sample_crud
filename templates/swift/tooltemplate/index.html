@@ -11,9 +11,9 @@
             <form method="post" action="" id="toolTemplateInputForm" >
                 {% csrf_token %}
                 
-                <div class="prompt-form" id="prompt-out-form-div">
+                <div class="prompt-form" >
                     <div class="formbg-inner">
-                        
+                            <input type="hidden" value="{% url 'appswift:tooltemplate_input_create' %}" id="form_url" name="form_url">
                         <div class="edit-prompt-form">
                          <div class="col-lg-6">
                             <div class="field padding-bottom--24">
@@ -92,9 +92,11 @@
                                         {% endfor %}
                                         {{form.id}}
                                       <td >{{ form.tool_input }}</td>
-                                      <td><a class="add-input-details" id="create_input_details" data-fancybox="" data-src="#inputdetails-popup"  data-url="{% url 'appswift:tooltemplate_input_create'%}">
-                                        <button type="button" class="btn btn-primary">Add More details</button>
-                                    </a></td>
+                                      <td>
+                                        <a class="add-input-details" id="create_input_details" data-fancybox="" data-src="#inputdetails-popup" data-ajax-url="{% url 'appswift:tooltemplate_input_create' %}">
+                                            <button type="button" class="btn btn-primary">Add More details</button>
+                                        </a>
+                                    </td>
                                       <td >{{ form.validation_message }}</td>
                                       <td >{{ form.sort_order }}</td>
 
@@ -170,7 +172,9 @@
             }
         });
     });
-      
+
+    
+    
 </script>
 
 {% endblock page_script %}
