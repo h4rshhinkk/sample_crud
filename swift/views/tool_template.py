@@ -12,7 +12,6 @@ import pdb
 import json
 
 
-
 class ToolTemplateView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         context = {
@@ -20,25 +19,21 @@ class ToolTemplateView(LoginRequiredMixin, View):
             'inp_form': ToolInputForm(),
             'item_formset': ToolInputFormFormSet()
         }
+        print('Tool input value:', request.GET.get('tool_input'))
 
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             tool_input_value = request.GET.get('tool_input')
-            additional_fields_html = ""
-
-            # Logic to determine additional fields based on tool_input_value
+            print('INSide Tool input value:',tool_input_value)
             if tool_input_value:
                 try:
-                    tool_input = ToolTemplateInput.objects.get(name=tool_input_value)
-                    # Depending on your model structure, you can fetch related fields or data here
-                    # For simplicity, let's assume tool_input has a related field called additional_fields
-                    additional_fields = tool_input.tool_input.all()
-                    context['additional_fields'] = additional_fields
-                    additional_fields_html = render_to_string('swift/tooltemplate/additional_fields.html', context)
+                    tool_input = ToolInput.objects.get(pk=tool_input_value) 
+                    tool_template_inputs = ToolTemplateInput.objects.filter(tool_input=tool_input)
+                    context['additional_fields'] = tool_template_inputs
+                    additional_fields_html = render_to_string('swift/tooltemplate/input_details_form.html', context)
                 except ToolInput.DoesNotExist:
-                    pass  # Handle the case where the tool_input doesn't exist
-
+                    pass 
             return JsonResponse({'additional_fields_html': additional_fields_html})
-
+        
         return render(request, 'swift/tooltemplate/index.html', context)
 
     def post(self, request, *args, **kwargs):
@@ -46,26 +41,24 @@ class ToolTemplateView(LoginRequiredMixin, View):
         inp_form = ToolInputForm(request.POST)
         item_formset = ToolInputFormFormSet(request.POST)
 
+        context = {
+            'form': form,
+            'inp_form': inp_form,
+            'item_formset': item_formset
+        }
+
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            if form.is_valid() and inp_form.is_valid() and item_formset.is_valid():
-                try:
-                    with transaction.atomic():
-                        tool_template_instance = form.save()
-                        tool_input_instance = inp_form.save(commit=False)
-                        tool_input_instance.tool_template = tool_template_instance
-                        tool_input_instance.save()
-                        item_formset.instance = tool_template_instance
-                        item_formset.save()
+            if form.is_valid():
+                with transaction.atomic():
+                    print('***',form)
+                    form.save()
+                    inp_form.save()
+                    item_formset.save()
                     
-                    response = {
-                        'status': True,
-                        'message': 'Form submitted successfully!'
-                    }
-                except Exception as e:
-                    response = {
-                        'status': False,
-                        'message': 'Error occurred while saving form data.'
-                    }
+                response = {
+                    'status': True,
+                    'message': 'Form submitted successfully!'
+                }
             else:
                 response = {
                     'status': False,
@@ -74,19 +67,35 @@ class ToolTemplateView(LoginRequiredMixin, View):
                     'item_formset_errors': item_formset.errors
                 }
             return JsonResponse(response)
+        else:
+            if form.is_valid() and inp_form.is_valid() and item_formset.is_valid():
+                with transaction.atomic():
+                    tool_template_instance = form.save()
+                    tool_input_instance = inp_form.save(commit=False)
+                    tool_input_instance.tool_template = tool_template_instance
+                    tool_input_instance.save()
+                    
+                    item_formset.instance = tool_template_instance
+                    item_formset.save()
+                
+                return redirect('appswift:tooltemplate_create')
+            else:
+                return render(request, 'swift/tooltemplate/index.html', context)
 
 class ToolTemplateInputCreateView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
+        tool = request.GET.get('tool')
+        tool_type = ToolInput.objects.get(pk=tool).tool_type.type
+        data = {}
         form = ToolInputForm()
-        context = {'form': form, 'id': 0}
-        data = {
-            'status': True,
-            'title': 'Add Inputs',
-            'template': render_to_string('swift/tooltemplate/input_details_form.html', context, request=request)
-        }
+        context = {'form': form, 'id': 0, 'input_type':tool_type}
+        data['status'] = True
+        data['title'] = 'Add Inputs'
+        data['template'] = render_to_string('swift/tooltemplate/input_details_form.html', context, request=request)
         return JsonResponse(data)
 
     def post(self, request, *args, **kwargs):
+        response = {}
         inputs_data = {
             'place_holder': request.POST.getlist('place_holder'),
             'description': request.POST.getlist('description'),
@@ -95,25 +104,32 @@ class ToolTemplateInputCreateView(LoginRequiredMixin, View):
             'min_length': request.POST.getlist('min_length'),
             'inp_validation_msg2': request.POST.getlist('inp_validation_msg2')
         }
-
+        print('inputs_data---',inputs_data)
         form = ToolInputForm(request.POST or None, initial={'data': inputs_data})
-        if form.is_valid():
+        print('form_data---',form)
+        
+        temp_form = ToolTemplateForm(request.POST, request.FILES)
+        print('temp_form----',temp_form)
+        if form.is_valid() and temp_form.is_valid():
             try:
                 with transaction.atomic():
                     tool_template = request.POST.get('tool_template', None)
                     if not ToolTemplateInput.objects.filter(tool_template=tool_template).exists():
-                        obj = ToolTemplateInput.objects.create(tool_template=tool_template, inputs=json.dumps(inputs_data))
-                        response = {'status': True, 'message': 'Added successfully'}
+                        inputs_data_json = json.dumps(inputs_data)
+                        obj = ToolTemplateInput.objects.create(tool_template=tool_template, inputs=inputs_data_json)
+                        
+                        response['status'] = True
+                        response['message'] = 'Added successfully'
                     else:
-                        response = {'status': False, 'message': 'Inputs Already exists'}
-            except Exception as e:
-                response = {'status': False, 'message': 'Error occurred while saving form data.'}
+                        response['status'] = False
+                        response['message'] = 'Inputs Already exists'
+            except Exception as error:
+                response['status'] = False
+                response['message'] = 'Something went wrong'
         else:
+            response['status'] = False
             context = {'form': form}
-            response = {
-                'status': False,
-                'title': 'Add Inputs',
-                'valid_form': False,
-                'template': render_to_string('swift/tooltemplate/input_details_form.html', context, request=request)
-            }
+            response['title'] = 'Add Inputs'
+            response['valid_form'] = False
+            response['template'] = render_to_string('swift/tooltemplate/input_details_form.html', context, request=request)
         return JsonResponse(response)

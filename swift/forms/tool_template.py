@@ -32,7 +32,7 @@ class ToolTemplateForm(forms.ModelForm):
 
 class ToolInputForm(forms.ModelForm):
     tool_input = forms.ModelChoiceField(queryset=ToolInput.objects.all(),                                                   
-        widget=forms.Select(attrs={"class": "form-control"}),
+        widget=forms.Select(attrs={"class": "form-control tool-select"}),
         required=False,
         label="Tool Input",)
     

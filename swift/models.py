@@ -149,6 +149,14 @@ ACTION_STATUS = [(SUCCESS, SUCCESS), (FAILED, FAILED)]
 ACTION_TYPES = [(CREATE, CREATE), (READ, READ),(UPDATE, UPDATE),(DELETE, DELETE),
                 (LOGIN, LOGIN),(LOGOUT, LOGOUT),(LOGIN_FAILED, LOGIN_FAILED)]
 
+
+INPUT_TYPES = (
+        ('text', 'Text'),
+        ('number', 'Number'),
+        ('email', 'Email'),
+        ('textarea', 'Textarea'),
+    )
+
 class ActivityLog(models.Model):
     actor = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     action_type = models.CharField(choices=ACTION_TYPES, max_length=15)
@@ -241,7 +249,7 @@ class PromptOutput(models.Model):
 
 class InputType(models.Model):
     name = models.CharField(max_length=150,)
-    type = models.CharField(max_length=150,)
+    type = models.CharField(max_length=150, choices=INPUT_TYPES)
     
     def __str__(self):
         return f'{self.name} - {self.type}'

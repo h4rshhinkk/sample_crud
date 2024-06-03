@@ -11,7 +11,7 @@
             <form method="post" action="" id="toolTemplateInputForm" >
                 {% csrf_token %}
                 
-                <div class="prompt-form" >
+                <div class="prompt-form" id="prompt-out-form-div">
                     <div class="formbg-inner">
                             <input type="hidden" value="{% url 'appswift:tooltemplate_input_create' %}" id="form_url" name="form_url">
                         <div class="edit-prompt-form">
@@ -29,7 +29,7 @@
                                 <label for="name">tool context</label> {{form.tool_context}}
                                 <p class="text-danger mt-2 mb-0">{{ form.tool_context.errors.as_text  }}</p>
                             </div>
-
+                                
                             <div class="field padding-bottom--24">
                                 <label for="name">Youtube_link</label> {{form.youtube_link}}
                                 <p class="text-danger mt-2 mb-0">{{ form.youtube_link.errors.as_text  }}</p>
@@ -93,8 +93,8 @@
                                         {{form.id}}
                                       <td >{{ form.tool_input }}</td>
                                       <td>
-                                        <a class="add-input-details" id="create_input_details" data-fancybox="" data-src="#inputdetails-popup" data-ajax-url="{% url 'appswift:tooltemplate_input_create' %}">
-                                            <button type="button" class="btn btn-primary">Add More details</button>
+                                        <a class="add-input-details" id="create_input_details" data-fancybox="" data-src="#inputdetails-popup"  data-url="{% url 'appswift:tooltemplate_input_create'%}">
+                                        <button type="button" class="btn btn-primary">Add More details</button>
                                         </a>
                                     </td>
                                       <td >{{ form.validation_message }}</td>
@@ -131,8 +131,9 @@
         <div class="add-inputdetails" id="inputdetails-popup" style="display:none;">
             <div class="pop-body" id="inputdetails-div">
                 <div class="formbg-inner">
-                    <form method="post" action="" class="InputDetailsForm" id="InputDetailsForm" name="InputDetailsForm">
+                    <form method="post" action="" class="InputDetailsForm" id="InputDetailsForm" name="InputDetailsForm" >
                         {% csrf_token %}
+                        <input type="hidden" value="{% url 'appswift:tooltemplate_input_create' %}" id="form_url" name="form_url">
                         <h2 class="padding-bottom--15" id="popup_head">Add Input Details</h2>
                         <div class="inputdetails-form" id="inputdetails-form-div">
                             
@@ -172,7 +173,8 @@
             }
         });
     });
-
+    
+    
     
     
 </script>
