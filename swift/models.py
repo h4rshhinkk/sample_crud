@@ -90,7 +90,7 @@ USER_STATUS =(
 TOOL_TYPE =(
     ('text_box','text box'),
     ('text_area','text area'),
-    ('radio_button','radio button'),
+    ('email','email'),
     ('checkbox','checkbox'),
 )
 
@@ -148,14 +148,6 @@ SUCCESS, FAILED = "Success", "Failed"
 ACTION_STATUS = [(SUCCESS, SUCCESS), (FAILED, FAILED)]
 ACTION_TYPES = [(CREATE, CREATE), (READ, READ),(UPDATE, UPDATE),(DELETE, DELETE),
                 (LOGIN, LOGIN),(LOGOUT, LOGOUT),(LOGIN_FAILED, LOGIN_FAILED)]
-
-
-INPUT_TYPES = (
-        ('text', 'Text'),
-        ('number', 'Number'),
-        ('email', 'Email'),
-        ('textarea', 'Textarea'),
-    )
 
 class ActivityLog(models.Model):
     actor = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -248,8 +240,14 @@ class PromptOutput(models.Model):
     text = models.JSONField(default=dict)
 
 class InputType(models.Model):
+    INPUT_TYPES = (
+        ('text', 'Text'),
+        ('number', 'Number'),
+        ('email', 'Email'),
+        ('textarea', 'Textarea'),
+    )
     name = models.CharField(max_length=150,)
-    type = models.CharField(max_length=150, choices=INPUT_TYPES)
+    type = models.CharField(max_length=50,choices=INPUT_TYPES)
     
     def __str__(self):
         return f'{self.name} - {self.type}'
@@ -259,7 +257,7 @@ class ToolInput(models.Model):
     tool_type = models.ForeignKey(InputType, on_delete=models.CASCADE, related_name='input_type')
 
     def __str__(self):
-        return f'{self.tool_type.name}'
+        return self.name
 
 class ToolType(models.Model):
     tool_type_category = models.CharField(choices=TOOL_TYPE_CATEGORY,max_length=20)
@@ -277,16 +275,17 @@ class ToolTemplate(models.Model):
     photo = models.ImageField(upload_to='profile', blank=True, null=True)
 
     def __str__(self):
-        return self.tool_type + ' - ' + self.tool_name
+        return self.tool_name
 
 class ToolTemplateInput(models.Model):
     tool_template = models.ForeignKey(ToolTemplate, on_delete=models.CASCADE, related_name='tool_template')
     tool_input = models.ForeignKey(ToolInput, on_delete=models.CASCADE, related_name='tool_input')
     inputs = models.JSONField(default=dict)
-    validation_message = models.CharField(max_length=150)
-    sort_order = models.CharField(max_length=150)                                     
+    validation_message = models.CharField(max_length=150, blank=True, null=True)
+    sort_order = models.CharField(max_length=150, blank=True, null=True)                                     
 
 
 class ToolKeyword(models.Model):
     tool_template = models.ForeignKey(ToolTemplate,on_delete=models.CASCADE, related_name='tool_template_keyword')
     keyword = models.CharField(max_length=150)
+    

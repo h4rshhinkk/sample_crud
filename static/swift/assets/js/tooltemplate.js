@@ -26,6 +26,7 @@ $(document).ready(function() {
                         setTimeout(function() {
                             $("#flash_message_success").attr("style", "display:none;")
                         }, 3500)
+                        window.location.href = response.redirect_url;
                     } else {
                         alert('ho')
                         if ('message' in response ){
@@ -71,12 +72,19 @@ function FilterCurriculum(page) {
 
 
 
-$(document).on('click', '#create_input_details', function(event) {
+$(document).on('click', '.create_input_details', function(event) {
     event.preventDefault();
-    var url = $(this).attr('data-url')
+
+    var url = $(this).data('url');
+    var prefix = $(this).data('prefix');
+    console.log("prefix ===",prefix);
     var row = $(this).closest('.form_set_row');
     var tool = row.find('.tool-select').val();
-    console.log("tool===",tool)
+    console.log("tool ===", tool);
+
+    var placeHolder = $("#id_place_holder").val() || "";
+    console.log("placeHolder ===", placeHolder);
+
     $.ajax({
         url: url,
         headers: { "X-CSRFToken": $("[name=csrfmiddlewaretoken]").val() },
@@ -85,14 +93,54 @@ $(document).on('click', '#create_input_details', function(event) {
             'tool': tool
         },
         beforeSend: function() {
-            $('#inputdetails-form-div').html('Loading...')
+            $('#inputdetails-form-div-' + prefix).html('Loading...');
         },
-        success: function(response) {            
-            $('#inputdetails-form-div').html(response.template)
-            $('#popup_head').html(response.title)
+        success: function(response) {
+            $('#inputdetails-form-div-' + prefix).html(response.template);
+            $('#popup_head-' + prefix).html(response.title);
         },
     });
-})
+});
+
+
+$(document).on('click', '.tooltemplate-input-submit', function(event) {
+    event.preventDefault();
+
+    var url = $(this).data('url');
+    var prefix = $(this).data('prefix');
+    // Collecting formset data
+    var formData = [];
+    $('.form_set_row').each(function() {
+        var formRow = $(this);
+        var toolInput = formRow.find('.tool-select').val();
+        var placeHolder = formRow.find('#id_place_holder').val() || "";
+        var description = formRow.find('#id_description').val() || "";
+        formData.push({
+            'toolInput': toolInput,
+            'placeHolder': placeHolder,
+            'description': description
+            // Add other form fields as needed
+        });
+    });
+
+    $.ajax({
+        url: url,
+        headers: { "X-CSRFToken": $("[name=csrfmiddlewaretoken]").val() },
+        method: "POST",
+        data: JSON.stringify(formData),
+        success: function(response) {
+            alert('Saved')
+
+            $('.add-inputdetails').each(function(){
+                $(this).modal('hide');
+            });
+            
+            $('#inputdetails-form-div-' + prefix).html(response.template);
+            $('#popup_head-' + prefix).html(response.title);
+        },
+       
+    });
+});
 
 
 $(document).ready(function() {
@@ -126,6 +174,7 @@ $(document).ready(function() {
             event.preventDefault();
             var formData = $("#InputDetailsForm").serializeArray();
             var url = $("#form_url").val()
+            
             $.ajax({
                 url: url,
                 headers: {
@@ -146,6 +195,7 @@ $(document).ready(function() {
                         setTimeout(function() {
                             $("#flash_message_success").attr("style", "display:none;")
                         }, 3500)
+                        
                     } else {
                         alert('ho')
                         if ('message' in response ){
