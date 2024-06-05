@@ -56,7 +56,7 @@
                                   </thead>
                                   <tbody>
                                     {% for form in item_formset.forms %}
-                                    <tr class=" form_set_row" id="form_row_{{ form.instance.pk }}">
+                                    <tr class=" form_set_row ">
                                         {% for hidden in form.hidden_fields %}
                                             {{ hidden }}
                                         {% endfor %}

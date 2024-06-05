@@ -25,32 +25,54 @@ class ToolTemplateView(LoginRequiredMixin, View):
         form = ToolTemplateForm(request.POST, request.FILES)
         item_formset = ToolInputFormFormSet(request.POST)
         place_holder = request.GET.get('placeHolder')
-        print('place_holder====',place_holder)
+        print('place_holder====!', place_holder)
+
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            data = json.loads(request.body)
+            tool = request.GET.get('tool')
+            place_holder = request.GET.get('placeHolder')
+            description = request.GET.get('description')
+            print("place_holder=======", place_holder)
+            print("description====!", description)
             
-            if form.is_valid()  and item_formset.is_valid():
+            try:
+                data = json.loads(request.body.decode('utf-8'))  # Ensure proper decoding
+                print("json data----", data)
+            except json.JSONDecodeError:
+                data = []
+                print("Invalid JSON received.")
+            
+            if form.is_valid() and item_formset.is_valid():
                 with transaction.atomic():
-                    form.save()
-                    print("form save")
-                    item_formset.instance= form.instance
-                    inputdetails =[
-                        {'inputs':{'place_holder':'11', 'description': '22h'}}
-                    ]
-                    
-                    print('++',inputdetails)      
-                    item_formset.inputs =  inputdetails             
+                    tool_template_instance = form.save()
+                    item_formset.instance = tool_template_instance
                     item_formset.save()
-                    print('item_formset===',item_formset)
+
+                    tool_template_inputs = []
+                    for item in data:
+                        print("Processing item:", item)
+                        tool_template_inputs.append(
+                            ToolTemplateInput(
+                                tool_template=tool_template_instance,
+                                sort=item.get('sort_order', None),
+                                tool_input_id=item['toolInput'],
+                                inputs=item['input_details'],
+                                validation_message=item['validation_message']
+                            )
+                        )
+                    if tool_template_inputs:
+                        ToolTemplateInput.objects.bulk_create(tool_template_inputs)
+                        print("Bulk create successful with inputs:", tool_template_inputs)
+                    else:
+                        print("No inputs to bulk create.")
+                    
                 response = {
                     'status': True,
                     'message': 'Form submitted successfully!',
                     'redirect_url': reverse('appswift:tooltemplate_create')
-                    
                 }
             else:
-                print('form',form.errors)
-                print('item_formset',item_formset.errors)
+                print('form', form.errors)
+                print('item_formset', item_formset.errors)
                 response = {
                     'status': False,
                     'form_errors': form.errors,
@@ -58,15 +80,19 @@ class ToolTemplateView(LoginRequiredMixin, View):
                 }
             return JsonResponse(response)
         else:
-            if form.is_valid()  and item_formset.is_valid():
+            if form.is_valid() and item_formset.is_valid():
                 with transaction.atomic():
-                    tool_template_instance = form.save()  
+                    tool_template_instance = form.save()
                     item_formset.instance = tool_template_instance
                     item_formset.save()
                 
                 return redirect('appswift:tooltemplate_create')
             else:
-                return render(request, 'swift/tooltemplate/index.html')
+                return render(request, 'swift/tooltemplate/index.html', {
+                    'form': form,
+                    'item_formset': item_formset
+                })
+
 
 class ToolTemplateInputCreateView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):

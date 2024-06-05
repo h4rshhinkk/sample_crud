@@ -1,7 +1,12 @@
 <div class="formbg-inner">
   <div class="edit-curriculum-form">
       
-       
+      
+      {% if id %}
+      <input type="hidden" value="{% url 'appswift:update_curriculum' id %}" id="form_url" name="form_url">
+      {% else %}
+      <input type="hidden" value="{% url 'appswift:tooltemplate_input_create' %}" id="form_url" name="form_url">
+      {% endif %}      
       
       {% if input_type == 'email' or input_type == 'textarea' %}
       
@@ -60,7 +65,7 @@
                 </div>
             </li>
         {% endif %}
-
+            
         
         
       <div class="field padding-bottom--24">
