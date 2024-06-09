@@ -19,7 +19,7 @@ class ToolInputForm(forms.Form):
             label='Place Holder',
             max_length=150,
             required=True,
-            widget=forms.TextInput(attrs={'autocomplete': 'off'})
+            widget=forms.TextInput(attrs={'autocomplete': 'off','class':'placeholder_key'})
         )
     
     description =forms.CharField(
@@ -55,7 +55,7 @@ class ToolTemplateInputForm(forms.ModelForm):
             label='Place Holder',
             max_length=150,
             required=True,
-            widget=forms.TextInput(attrs={'autocomplete': 'off'})
+            widget=forms.TextInput(attrs={'autocomplete': 'off','class':'placeholder_key'})
         )
     
     description =forms.CharField(
@@ -67,22 +67,26 @@ class ToolTemplateInputForm(forms.ModelForm):
 
     max_length =forms.IntegerField(
             label='Max Length',
+            required=False,
             widget=forms.NumberInput(attrs={'autocomplete': 'off'})
         )
 
     max_validation_msg =forms.CharField(
             label='Max Validation Message',
             max_length=150,
+            required=False,
             widget=forms.TextInput(attrs={'autocomplete': 'off'})
         )
     
     min_length =forms.IntegerField(
             label='Min Length',
+            required=False,
             widget=forms.NumberInput(attrs={'autocomplete': 'off'})
         )
     min_validation_msg =forms.CharField(
             label='Min Validation Message',
             max_length=150,
+            required=False,
             widget=forms.TextInput(attrs={'autocomplete': 'off'})
         )
     class Meta:
@@ -90,8 +94,8 @@ class ToolTemplateInputForm(forms.ModelForm):
         fields = ['tool_input','validation_message','sort_order']
         widgets = {
             'tool_input': forms.Select(attrs={'class': 'form-control tool-select'}),
-            'validation_message': forms.TextInput(attrs={'class': 'form-control'}),
-            'sort_order': forms.TextInput(attrs={'class': 'form-control'}),
+            'validation_message': forms.TextInput(attrs={'class': 'form-control validation-message'}),
+            'sort_order': forms.TextInput(attrs={'class': 'form-control sort-order'}),
         }
 
 
@@ -99,7 +103,7 @@ ToolInputFormFormSet = inlineformset_factory(
     ToolTemplate,
     ToolTemplateInput,
     form=ToolTemplateInputForm,
-    extra=1,
+    extra=2,
     can_delete=True,
 )
 
@@ -113,4 +117,3 @@ ToolInputFormFormSet = inlineformset_factory(
     #     if commit:
     #         instance.save()
     #     return instance
-
