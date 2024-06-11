@@ -27,8 +27,9 @@ $(document).ready(function() {
                         setTimeout(function() {
                             $("#flash_message_success").attr("style", "display:none;")
                         }, 3500)
+                        window.location.href = response.redirect_url;
                     } else {
-                        alert('ho')
+                        alert('Opps...Something Went Wrong')
                         if ('message' in response ){
                             $(".carousel__button").click()
                             $(".msg_desc").text(response.message)
@@ -99,37 +100,37 @@ function FilterCurriculum(page) {
 // });
 
 
-$(document).on('click', '.create_input_details', function(event) {
-    event.preventDefault();
+// $(document).on('click', '.create_input_details', function(event) {
+//     event.preventDefault();
 
-    var url = $(this).data('url');
-    var prefix = $(this).data('prefix');
+//     var url = $(this).data('url');
+//     var prefix = $(this).data('prefix');
 
-    var row = $(this).closest('.form_set_row');
-    var tool = row.find('.tool-select').val();
+//     var row = $(this).closest('.form_set_row');
+//     var tool = row.find('.tool-select').val();
 
-    $.ajax({
-        url: url,
-        headers: { "X-CSRFToken": $("[name=csrfmiddlewaretoken]").val() },
-        method: "GET",
-        data: {
-            'tool': tool
-        },
-        beforeSend: function() {
-            $('#inputdetails-form-div-' + prefix).html('Loading...');
-        },
-        success: function(response) {
-            $('#inputdetails-form-div-' + prefix).html(response.template);
-            $('#popup_head-' + prefix).html(response.title);
-        },
-    });
-});
+//     $.ajax({
+//         url: url,
+//         headers: { "X-CSRFToken": $("[name=csrfmiddlewaretoken]").val() },
+//         method: "GET",
+//         data: {
+//             'tool': tool
+//         },
+//         beforeSend: function() {
+//             $('#inputdetails-form-div-' + prefix).html('Loading...');
+//         },
+//         success: function(response) {
+//             $('#inputdetails-form-div-' + prefix).html(response.template);
+//             $('#popup_head-' + prefix).html(response.title);
+//         },
+//     });
+// });
 
 $(document).ready(function() {
     $('#tool_input').change(function() {
         var tool_input_value = $(this).val();
         $.ajax({
-            url: 'swift/viewstool_template', // replace with the actual URL for ToolTemplateView
+            url: 'swift/viewstool_template', 
             type: 'GET',
             data: {
                 'tool_input': tool_input_value

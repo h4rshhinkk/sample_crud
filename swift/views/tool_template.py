@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, View
+from django.urls import reverse
 from swift.forms.tool_template import * 
 from swift.helper import renderfile, is_ajax, LogUserActivity
 from swift.models import ToolInput,ToolType,ToolTemplateInput,ToolTemplate,ToolKeyword
@@ -31,6 +32,7 @@ class ToolTemplateView(LoginRequiredMixin, View):
                     input_data = {
                         'place_holder':i.cleaned_data.get('place_holder'),
                         'description':i.cleaned_data.get('description'),
+                            
                         'max_length':i.cleaned_data.get('max_length'),
                         'max_validation_msg':i.cleaned_data.get('max_validation_msg'),
                         'min_length':i.cleaned_data.get('min_length'),
@@ -51,7 +53,8 @@ class ToolTemplateView(LoginRequiredMixin, View):
 
                 response = {
                     'status': True,
-                    'message': 'Form submitted successfully!'
+                    'message': 'Form submitted successfully!',
+                    'redirect_url': reverse('appswift:tooltemplate_create')
                 }
             else:
                 print('--invalid---')
@@ -61,21 +64,21 @@ class ToolTemplateView(LoginRequiredMixin, View):
                 response = {
                     'status': False,
                     'form_errors': form.errors,
+                    'message': 'Form Submission Failed!',
                     'item_formset_errors': item_formset.errors
                 }
+                print('Respo Print===',response)
             return JsonResponse(response)
         else:
             if form.is_valid()  and item_formset.is_valid():
                 with transaction.atomic():
-                    tool_template_instance = form.save()
-                    
-                    
+                    tool_template_instance = form.save()                    
                     item_formset.instance = tool_template_instance
                     item_formset.save()
                 
                 return redirect('appswift:tooltemplate_create')
             else:
-                return render(request, 'swift/tooltemplate/index.html', context)
+                return render(request, 'swift/tooltemplate/index.html',)
 
 class ToolTemplateInputCreateView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
@@ -130,3 +133,25 @@ class ToolTemplateInputCreateView(LoginRequiredMixin, View):
             response['valid_form'] = False
             response['template'] = render_to_string('swift/tooltemplate/input_details_form.html', context, request=request)
         return JsonResponse(response)
+    
+
+class TemplateToolList(LoginRequiredMixin,View):
+    template_name = "swift/tooltemplate/tool_list.html"
+    def get(self, request, *args, **kwargs):
+        tool_types = ToolTemplate.objects.all()
+        print('===',tool_types)
+        context ={
+            'tool_types':tool_types,
+        }
+        return render(request, self.template_name,context)
+    
+class TemplateToolDetail(LoginRequiredMixin,View):
+    template_name = "swift/tooltemplate/template_form.html"
+    def get(self, request, pk, *args, **kwargs):
+        tool_template = get_object_or_404(ToolTemplate, pk=pk)
+        tool_inputs = ToolTemplateInput.objects.filter(tool_template=tool_template)
+        context = {
+            'tool_template': tool_template,
+            'tool_inputs': tool_inputs,
+        }
+        return render(request, self.template_name, context)

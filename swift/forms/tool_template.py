@@ -8,10 +8,10 @@ class ToolTemplateForm(forms.ModelForm):
         model = ToolTemplate
         fields = ['tool_type','tool_name','tool_context','youtube_link']
         widgets = {
-            'tool_type': forms.Select(attrs={'class': 'form-control'}),
-            'tool_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'tool_context': forms.Textarea(attrs={'class': 'form-control'}),
-            'youtube_link': forms.URLInput(attrs={'class': 'form-control'}),
+            'tool_type': forms.Select(attrs={'class': 'form-control','required':'True'}),
+            'tool_name': forms.TextInput(attrs={'class': 'form-control','required':'True'}),
+            'tool_context': forms.Textarea(attrs={'class': 'form-control','required':'True'}),
+            'youtube_link': forms.URLInput(attrs={'class': 'form-control','required':'True'}),
         }
 
 class ToolInputForm(forms.Form):
@@ -30,22 +30,22 @@ class ToolInputForm(forms.Form):
         )
 
     max_length =forms.IntegerField(
-            label='Max Length',
+            label='Max Length',required=False,
             widget=forms.NumberInput(attrs={'autocomplete': 'off'})
         )
 
     max_validation_msg =forms.CharField(
-            label='Max Validation Message',
+            label='Max Validation Message',required=False,
             max_length=150,
             widget=forms.TextInput(attrs={'autocomplete': 'off'})
         )
     
     min_length =forms.IntegerField(
-            label='Min Length',
+            label='Min Length',required=False,
             widget=forms.NumberInput(attrs={'autocomplete': 'off'})
         )
     min_validation_msg =forms.CharField(
-            label='Min Validation Message',
+            label='Min Validation Message',required=False,
             max_length=150,
             widget=forms.TextInput(attrs={'autocomplete': 'off'})
         )
@@ -66,22 +66,22 @@ class ToolTemplateInputForm(forms.ModelForm):
         )
 
     max_length =forms.IntegerField(
-            label='Max Length',
+            label='Max Length',required=False,
             widget=forms.NumberInput(attrs={'autocomplete': 'off'})
         )
 
     max_validation_msg =forms.CharField(
-            label='Max Validation Message',
+            label='Max Validation Message',required=False,
             max_length=150,
             widget=forms.TextInput(attrs={'autocomplete': 'off'})
         )
     
     min_length =forms.IntegerField(
-            label='Min Length',
+            label='Min Length',required=False,
             widget=forms.NumberInput(attrs={'autocomplete': 'off'})
         )
     min_validation_msg =forms.CharField(
-            label='Min Validation Message',
+            label='Min Validation Message',required=False,
             max_length=150,
             widget=forms.TextInput(attrs={'autocomplete': 'off'})
         )
@@ -89,9 +89,9 @@ class ToolTemplateInputForm(forms.ModelForm):
         model = ToolTemplateInput
         fields = ['tool_input','validation_message','sort_order']
         widgets = {
-            'tool_input': forms.Select(attrs={'class': 'form-control tool-select'}),
-            'validation_message': forms.TextInput(attrs={'class': 'form-control'}),
-            'sort_order': forms.TextInput(attrs={'class': 'form-control'}),
+            'tool_input': forms.Select(attrs={'class': 'form-control tool-select','required':'True'}),
+            'validation_message': forms.TextInput(attrs={'class': 'form-control','required':'True'}),
+            'sort_order': forms.TextInput(attrs={'class': 'form-control','required':'True'}),
         }
 
 
@@ -99,7 +99,7 @@ ToolInputFormFormSet = inlineformset_factory(
     ToolTemplate,
     ToolTemplateInput,
     form=ToolTemplateInputForm,
-    extra=1,
+    extra=2,
     can_delete=True,
 )
 
@@ -113,4 +113,3 @@ ToolInputFormFormSet = inlineformset_factory(
     #     if commit:
     #         instance.save()
     #     return instance
-

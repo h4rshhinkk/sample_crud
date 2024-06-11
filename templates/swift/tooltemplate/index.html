@@ -57,7 +57,7 @@
                                             {% endfor %}
                                             <td>{{ form.tool_input }}</td>
                                             <td>
-                                                <a class="add-input-details create_input_details"  data-fancybox=""data-src="#inputdetails-popup-{{ form.prefix }}" >
+                                                <a class="add-input-details create_input_details"  data-fancybox="" data-src="#inputdetails-popup-{{ form.prefix }}" >
                                                     <button type="button" class="btn btn-primary">Add More Details</button>
                                                 </a>
                                                 <div class="add-inputdetails" id="inputdetails-popup-{{ form.prefix }}" style="display:none;">
@@ -75,7 +75,7 @@
                                                                               <label for="name">Description</label> {{form.description}}
                                                                               <p class="text-danger mt-2 mb-0">{{ form.description.errors.as_text }}</p>
                                                                           </div>
-                                                              
+                                                                          
                                                                           <div class="field padding-bottom--24 number-hide">
                                                                               <h5>More Validation</h5>
                                                                           </div>
@@ -221,7 +221,6 @@
             prefix: formsetPrefix,
             formCssClass: 'dynamic-formset',
             added: function (row) {
-                // Additional logic after adding a form
                 const formIndex = $('#id_' + formsetPrefix + '-TOTAL_FORMS').val() - 1;
                 const newFormHtml = formsetRowTemplate
                     .replace(/{prefix}/g, formsetPrefix + '-' + formIndex)
@@ -236,6 +235,7 @@
                     .replace('{min_validation_msg}', $('#id_' + formsetPrefix + '-' + formIndex + '-min_validation_msg')[0].outerHTML)
 
                 row.replaceWith(newFormHtml);
+                
             }
         });
 
@@ -255,7 +255,7 @@
                 success: function(response) {
                     row.find('.number-hide').hide()
                     if (response.input_type === 'text' ){
-                        row.find('.number-hide').show()
+                        row.find('.number-hide').hide()
                     }
                     if (response.input_type === 'email' ){
                         row.find('.number-hide').hide()
@@ -274,7 +274,6 @@
    
     $(document).on('click', '.delete-row', function() {
         $(this).closest('.form_set_row').remove();
-        // Update formset management form
         $('.form_set_row').formset('update');
     });
 </script>
