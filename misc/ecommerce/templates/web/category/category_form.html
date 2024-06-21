@@ -1,0 +1,20 @@
+<div class="formbg-inner">
+    <div class="edit-category-form">
+        {% if id %}
+            <input type="hidden" value="{% url 'web:update_category' id %}" id="form_url" name="form_url">
+        {% else %}
+            <input type="hidden" value="{% url 'web:create_category' %}" id="form_url" name="form_url">
+        {% endif %}            
+        <div class="field padding-bottom--24">
+            <label for="name">Name</label> {{ form.title }}
+            <p class="text-danger mt-2 mb-0">{{ form.title.errors.as_text  }}</p>
+        </div>
+        <div class="field padding-bottom--24">
+            <label for="name">description</label> {{ form.description }}
+            <p class="text-danger mt-2 mb-0">{{ form.description.errors.as_text  }}</p>
+        </div>
+        <div class="field padding-bottom--24">
+            <input class="category-submit" id="category-submit" type="submit" name="submit" value="Save">
+        </div>
+    </div>
+</div>

@@ -23,3 +23,6 @@
 #https://www.quora.com/What-is-the-difference-between-request-get-and-request-GET-get-in-django
 #https://chatgpt.com/share/4ce2458b-a09d-436f-9ea8-5eb52ebe864a
 #https://chatgpt.com/share/facb097e-f5b2-4c43-9f14-bfea74bcfb0e
+
+#22/06
+#https://chatgpt.com/share/e5b77e57-fc85-4f9a-bba1-490dad80a3da  

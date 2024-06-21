@@ -1,0 +1,16 @@
+<div class="formbg-inner">
+    <div class="edit-category-form">
+        {% if id %}
+            <input type="hidden" value="{% url 'web:view_category' id %}" id="form_url" name="form_url">
+        {% endif %}            
+        <div class="field padding-bottom--24">
+            <label for="name">Name:</label> {{ form.title }} 
+        </div>
+        <div class="field padding-bottom--24">
+            <label for="name">Description:</label> {{ form.description }}
+        </div>
+        <div class="field padding-bottom--24">
+            <label for="name">Status:</label> {{ form.is_active }}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+*.log
+*.pot
+*.pyc
+*.media
+*.env
+*.txt
+*/__pycache__/
+*.pyc
+*.db
+*venv
+*idea/
+media/*
+media/
+*.DS_Store
+
+# Environments
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+log/
+.DS_Store
+#media
+
+# Visual Studio Code # 
+.vscode/* 
+!.vscode/settings.json 
+!.vscode/tasks.json 
+!.vscode/launch.json 
+!.vscode/extensions.json 
+.history

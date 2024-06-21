@@ -1,0 +1,52 @@
+{% load static %}
+<div class="sidebar-content">
+    <div class="sidebar-content-wrapper">
+        <div class="logo-box">
+            <h1 class="logo-full">Ecommerce</h1>
+            <h1 class="logo-collapsed">E</h1>
+        </div>
+        <nav>
+            <ul class="sidebar-link-list">
+                <li class="sidebar-item active">
+                    <a href="" class="sidebar-link">
+                        <span class="menu-icon">
+                            <img class="icon-dark" src="{% static 'web/assets/images/dashboard.svg' %}">
+                            <img class="icon-white" src="{% static 'web/assets/images/dashboard-white.svg' %}">
+                        </span>
+                        <span class="menu-item">Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'web:category' %}" class="sidebar-link">
+                        <span class="menu-icon">
+                            <img class="icon-dark" src="{% static 'web/assets/images/dashboard.svg' %}">
+                            <img class="icon-white" src="{% static 'web/assets/images/dashboard-white.svg' %}">
+                        </span>
+                        <span class="menu-item">Category</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a href="{% url 'web:product' %}" class="sidebar-link">
+                        <span class="menu-icon">
+                            <img class="icon-dark" src="{% static 'web/assets/images/dashboard.svg' %}">
+                            <img class="icon-white" src="{% static 'web/assets/images/dashboard-white.svg' %}">
+                        </span>
+                        <span class="menu-item">Products</span>
+                    </a>
+                </li>
+                
+
+                {% comment %} <li class="sidebar-item">
+                    <a href="" class="sidebar-link">
+                        <span class="menu-icon">
+                            <img class="icon-dark" src="{% static 'web/assets/images/dashboard.svg' %}">
+                            <img class="icon-white" src="{% static 'web/assets/images/dashboard-white.svg' %}">
+                        </span>
+                        <span class="menu-item">Logout</span>
+                    </a>
+                </li> {% endcomment %}
+            </ul>
+        </nav>
+        </div>
+    </div>
