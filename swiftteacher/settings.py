@@ -148,34 +148,12 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CRONJOBS = [
-    """('0 */23 * * *', 'hisensehr.crone.expire_all_leaves'),
-    ('0 1 * * *', 'hisensehr.crone.update_user_status'),
-    ('0 0 * * *', 'hisenseapi.cron.birthdaynotificationcron'),
-    ('0 0 * * *', 'hisenseapi.cron.workanniversarynotificationcron'),
-    ('0 4 1 * *', 'hisensehr.crone.attendance_graph_log'),
-    ('0 0 * * *', 'hisensehr.crone.document_expiry'),
-    ('0 0 * * *', 'hisensehr.crone.probation_alert'),"""
-    
-]
 
 
 
 AUTH_USER_MODEL = 'swift.User'
 
 INTERNAL_IPS = ['127.0.0.1',]
-
-CACHES = {	
-    'forgot_password_cache': {	
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',	
-        'LOCATION': './log',	
-        'TIMEOUT': 30 * 60 * 60  # 30 min	
-    },	
-    'default': {	
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',	
-        'LOCATION': './log',	
-    }	
-}
 
 
 #sendgrig email
