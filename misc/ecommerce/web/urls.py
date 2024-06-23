@@ -22,6 +22,8 @@ urlpatterns = [
     
     #Product
     path('product/', ProductView.as_view(), name='product'),
-    path('product/create/',ProductCreate.as_view(),name='create_product')
+    path('product/create/',ProductCreate.as_view(),name='create_product'),
+    path('product/<int:pk>/update/', ProductUpdate.as_view(), name='update_product'),
+
 
 ]

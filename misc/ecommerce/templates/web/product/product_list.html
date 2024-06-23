@@ -1,34 +1,17 @@
 {% load static %}
-{% for category in categories %}
+{% for product in products %}
 <tr>
-    <td>{{forloop.counter0|add:categories.start_index}}</td>
-    <td>{{category.title}}</td>
-    <td>{{category.description}}</td>
-  
+    <td>{{forloop.counter0|add:products.start_index}}</td>
+    <td>{{product.category}}</td>
+    <td>{{product.name}}</td>
+    <td>{{product.description}}</td>
+    <td>{{product.price}}</td>
+
     <td>
-        <form method="POST" name="is_active">
-            {% csrf_token %}
-        <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" {% if category.is_active == True %} checked {% endif %} name="is_active">
-            <label class="form-check-label" for="flexSwitchCheckDefault">{{category.is_active}} </label>
-        </div>
-         </form>
-    </td>
-   
-    <td>
-        <a href="javascript:;" class="category-edit" id="category-edit" data-fancybox="" data-src="#category-popup" data-url="{% url 'web:update_category' category.id %}">
+        <a href="{% url 'web:update_product' product.id %}" class="product-edit" id="product-edit"  data-url="">
             <img src="{% static '/web/assets/images/edt_icon.svg' %}" alt="icon">
         </a>
-
-        <a href="javascript:;" onclick="CategoryDelete({{category.id}})">
-            <img src="{% static '/web/assets/images/dlt_icon.svg' %}" alt="icon">
-        </a>
-
-        <a href="javascript:;" class="category-edit" id="category-edit" data-fancybox="" data-src="#category-popup" data-url="{% url 'web:view_category' category.id %}">
-            <img src="{% static '/web/assets/images/eye-svgrepo-com.svg' %}"  width="38" height="38" alt="icon">
-        </a>
     </td>
 
-    
 <tr>
 {% endfor %}

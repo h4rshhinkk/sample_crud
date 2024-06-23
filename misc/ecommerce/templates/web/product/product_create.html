@@ -1,0 +1,116 @@
+{% extends "web/layout/user_base.html" %}
+{% load static %}
+{% block body_block %}
+<div class="content-inner full-screen">
+    <div class="page-block">
+
+        {% if id %}
+            <div class="d-flex justify-content-between">
+                <h1 class="page-block-title">Edit Product</h1>
+            </div>
+        {% else %}
+            <div class="d-flex justify-content-between">
+                <h1 class="page-block-title">Create Product</h1>
+            </div>
+        {% endif %}  
+
+        <div>
+            <form method="post" action="" id="productInputForm">
+                {% csrf_token %}
+                <div class="product-form" id="product-out-form-div">
+                    <div class="formbg-inner">
+                        <input type="hidden" value="{% url 'web:create_product' %}">
+                        <div class="edit-product-form row">
+                            <div class="col-lg-6">
+                                <div class="field padding-bottom--24">
+                                    <label for="tool_type">Category</label> {{ form.category }}
+                                    <p class="text-danger mt-2 mb-0">{{ form.category.errors.as_text }}</p>
+                                </div>
+                                <div class="field padding-bottom--24">
+                                    <label for="tool_name">Name</label> {{ form.name }}
+                                    <p class="text-danger mt-2 mb-0">{{ form.name.errors.as_text }}</p>
+                                </div>
+                                <div class="field padding-bottom--24">
+                                    <label for="tool_context">Description</label> {{ form.description }}
+                                    <p class="text-danger mt-2 mb-0">{{ form.description.errors.as_text }}</p>
+                                </div>
+                                <div class="field padding-bottom--24">
+                                    <label for="youtube_link">Price</label> {{ form.price }}
+                                    <p class="text-danger mt-2 mb-0">{{ form.price.errors.as_text }}</p>
+                                </div>
+                            </div>
+                                
+                            <div class="col-lg-6">
+
+                                <div class="d-flex justify-content-between">
+                                    <h1 class="page-block-title">Add Images</h1>
+                                </div>
+
+
+                                <div class="row">
+                                    {{ item_formset.management_form }}
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Image</th>
+                                                <th>Set as Default</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for form in item_formset.forms %}
+                                            <tr class="form_set_row dynamic-formset">
+                                                {% for hidden in form.hidden_fields %}
+                                                    {{ hidden }}
+                                                {% endfor %}
+                                                <td>{{ form.image }}</td>
+                                                <td>{{ form.is_default }}</td>
+
+                                                <td></td>
+                                            </tr>
+                                            {{ form.field_errors }}
+                                            {{ form.errors }}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                            <div class="field padding-bottom--24">
+                                <input class="product-submit" id="product-submit" type="submit" name="submit" value="Save">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock body_block %}
+
+{% block page_script %}
+<script src="{% static 'web/assets/js/formset.js' %}?v={% now 'd_m_yH:i:s' %}"></script>
+
+<script>
+    $(document).ready(function () {
+        const formsetPrefix = '{{ item_formset.prefix }}';
+        $('.form_set_row').formset({
+            addText: '<span>Add Image</span>',
+            deleteText: 'Remove',
+            prefix: formsetPrefix,
+            formCssClass: 'dynamic-formset',
+            added: function (row) {
+               
+            }
+        });
+    });
+   
+    $(document).on('click', '.delete-row', function() {
+        $(this).closest('.form_set_row').remove();
+        $('.form_set_row').formset('update');
+    });
+</script>
+
+{% endblock page_script %}

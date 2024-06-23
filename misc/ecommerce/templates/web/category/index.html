@@ -64,7 +64,8 @@
         $(".toggle-status").on("change", function() {
             let categoryId = $(this).data("id");
             let isActive = this.checked;
-
+            console.log("categoryId===",categoryId)
+            console.log("isActive===",isActive)
             $.ajax({
                 url: "{% url 'web:change_status' %}",
                 type: "POST",
@@ -80,7 +81,7 @@
                 success: function(data) {
                     if (data.status === "success") {
                         console.log("Status updated successfully");
-                        location.reload();
+                        
                     } else {
                         alert("Failed to update status");
                     }

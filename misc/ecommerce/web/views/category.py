@@ -1,6 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, View
-from django.views.decorators.csrf import csrf_exempt
 from web.forms.category import CategoryForm
 from web.helper import renderfile, is_ajax, LogUserActivity
 from web.models import Category
@@ -137,23 +136,17 @@ class CategoryDelete(View):
         response['message'] = "Category deleted successfully"
         return JsonResponse(response)
     
-@csrf_exempt
 def change_status(request):
     if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            category_id = data['id']
-            is_active = data['is_active']
-            
-            category = get_object_or_404(Category, id=category_id)
-            category.is_active = is_active
-            category.save()
-            
-            response = {'status': 'success', 'is_active': category.is_active}
-            return JsonResponse(response, status=200)
-        except (Category.DoesNotExist, KeyError) as e:
-            response = {'status': 'error', 'message': str(e)}
-            return JsonResponse(response, status=400)
+        data = json.loads(request.body)
+        print('data===',data)
+        category_id = data['id']
+        is_active = data['is_active']
+        category = get_object_or_404(Category, id=category_id)
+        category.is_active = is_active
+        category.save()
+        response = {'status': 'success', 'is_active': category.is_active}
+        return JsonResponse(response, status=200)
     else:
         response = {'status': 'error', 'message': 'Invalid request'}
         return JsonResponse(response, status=400)

@@ -84,7 +84,6 @@ $(document).on('click', '#create_category', function(event) {
         success: function(response) {            
             $('#category-form-div').html(response.template)
             $('#popup_head').html(response.title)
-            
         },
     });
 })
@@ -133,6 +132,7 @@ function CategoryDelete(id) {
                             $("#flash_message_success").attr("style", "display:none;");
                         }, 3500);
                         FilterCategory('')
+                        location.reload();
                     }
                 },
             });

@@ -28,5 +28,9 @@ class Product(models.Model):
 class ProductMedia(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
     image=models.ImageField(upload_to='products/', blank=True,null=True)
+    is_default = models.BooleanField(default=False)
     created_at=models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.product

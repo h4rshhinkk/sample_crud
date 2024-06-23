@@ -27,6 +27,16 @@
                 </li>
 
                 <li class="sidebar-item">
+                    <a href="{% url 'web:create_product' %}" class="sidebar-link">
+                        <span class="menu-icon">
+                            <img class="icon-dark" src="{% static 'web/assets/images/dashboard.svg' %}">
+                            <img class="icon-white" src="{% static 'web/assets/images/dashboard-white.svg' %}">
+                        </span>
+                        <span class="menu-item">Create Product</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
                     <a href="{% url 'web:product' %}" class="sidebar-link">
                         <span class="menu-icon">
                             <img class="icon-dark" src="{% static 'web/assets/images/dashboard.svg' %}">
