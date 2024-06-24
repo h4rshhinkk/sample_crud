@@ -9,7 +9,6 @@ urlpatterns = [
     # Landing Page
     path("", Home.as_view(), name="home"),
 
-
     #Category
     path('category/', CategoryView.as_view(), name='category'),
     path('category/create/', CategoryCreate.as_view(), name='create_category'),
@@ -24,6 +23,13 @@ urlpatterns = [
     path('product/', ProductView.as_view(), name='product'),
     path('product/create/',ProductCreate.as_view(),name='create_product'),
     path('product/<int:pk>/update/', ProductUpdate.as_view(), name='update_product'),
+    path('product/<int:pk>/delete/', ProductDelete.as_view(), name='delete_product'),
 
+    #list
+    path('product_image/', ProductImageView.as_view(), name='product_image'),
+
+
+    #search
+    path('search/',search,name="search")
 
 ]

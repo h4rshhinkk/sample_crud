@@ -1,0 +1,28 @@
+{% extends "web/layout/user_base.html" %}
+{% load static %}
+{% block body_block %}
+<div class="content-inner full-screen">
+    <div class="page-block">
+
+        {% for i in products_images %}
+            <div class="card" style="width: 18rem;">
+                {% if i.image %}
+                    <img src="{{i.image.url}}" class="card-img-top" alt="...">
+                {% else %}
+                    <img src="{% static 'web/assets/images/default-avatar.jpg' %}" class="card-img hieght="10" >
+                {% endif %}
+                
+                <div class="card-body">
+                <h5 class="card-title">{{i.product}}</h5>
+                <h5 class="card-title">{{i.is_default}}</h5>
+                </div>
+                
+            </div>  
+        {% endfor %}
+        
+    </div>
+</div>
+{% endblock body_block %}
+
+{% block page_script %}
+{% endblock page_script %}

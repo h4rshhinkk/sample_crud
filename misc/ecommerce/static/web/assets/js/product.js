@@ -88,3 +88,34 @@ $(document).on('click', '#create_product', function(event) {
 })
 
 
+function ProductDelete(id) {
+    var url = '/product/' + String(id) + '/delete/'
+    swal({
+        icon: "warning",
+        title: "Verify Details",
+        text: "Are you sure you want to delete this record?",
+        buttons: true,
+        dangerMode: true,
+    }).then(function(okey) {
+        if (okey) {
+            $.ajax({
+                url: url,
+                headers: { "X-CSRFToken": $("[name=csrfmiddlewaretoken]").val() },
+                method: "POST",
+                data: {},
+                beforeSend: function() {},
+                success: function(response) {
+                    if (response.status) {
+                        $(".msg_desc").text(response.message);
+                        $("#flash_message_success").attr("style", "display:block;");
+                        setTimeout(function() {
+                            $("#flash_message_success").attr("style", "display:none;");
+                        }, 3500);
+                        FilterProduct('')
+                        location.reload();
+                    }
+                },
+            });
+        }
+    });
+}

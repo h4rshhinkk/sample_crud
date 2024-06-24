@@ -17,6 +17,7 @@ class Product(models.Model):
     name = models.CharField(max_length=200,)
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2,blank=True,null=True)
+    keyword = models.CharField(max_length=200,blank=True,null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
@@ -24,6 +25,9 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def get_default_media(self):
+        return self.productmedia_set.filter(is_default=True, is_active=True).first()
     
 class ProductMedia(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
@@ -33,4 +37,15 @@ class ProductMedia(models.Model):
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.product
+        return self.product.name
+        
+    
+class Variants(models.Model):
+    title = models.CharField(max_length=100, blank=True,null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+    price = models.DecimalField(max_digits=12, decimal_places=2,default=0)
+    sale_price = models.DecimalField(max_digits=12, decimal_places=2,default=0)
+
+    def __str__(self):
+        return self.title

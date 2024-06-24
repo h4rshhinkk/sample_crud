@@ -10,21 +10,22 @@ from django.core.paginator import *
 from web.constantvariables import PAGINATION_PERPAGE
 from django.shortcuts import get_object_or_404,render,redirect
 from django.db import transaction
-
+from django.db.models import Q
 
 class ProductView(View):
     def get(self, request, *args, **kwargs):
         context, response = {}, {}
         page = int(request.GET.get('page', 1))
-        products = Product.objects.filter(is_active=True)
-        paginator = Paginator(products, PAGINATION_PERPAGE)
-        try:
-            products = paginator.page(page)
-        except PageNotAnInteger:
-            products = paginator.page(1)
-        except EmptyPage:
-            products = paginator.page(paginator.num_pages)
-
+        search_query = request.GET.get('search', '')
+        if search_query:
+            products = Product.objects.filter(
+                name__icontains=search_query,
+                is_active=True
+            )
+        else:
+            products = Product.objects.filter(is_active=True)
+        
+        
         context['products'], context['current_page'] = products, page
         if is_ajax(request=request):
             response['status'] = True
@@ -42,32 +43,59 @@ class ProductCreate(View):
         }
         return render(request, 'web/product/product_create.html', context)
 
-    def post(self,request, *args, **kwargs):
-        form = ProductForm(request.POST,request.FILES)
-        if form.is_valid():
-            data = form.save()
-            print('data',data)
-            response={
-                'status':True,
+    def post(self, request, *args, **kwargs):
+        form = ProductForm(request.POST, request.FILES)
+        formset = MultipleImageInputFormFormSet(request.POST, request.FILES)
+
+        if form.is_valid() and formset.is_valid():
+            product_instance = form.save()
+
+            instances = formset.save(commit=False)
+            for instance in instances:
+                instance.product = product_instance
+                instance.save()
+            response = {
+                'status': True,
                 'message': 'Form submitted successfully!',
             }
+            return redirect('web:product')
         else:
-                print('--invalid---')
-                print('form',form.errors)
-                response = {
-                    'status': False,
-                    'form_errors': form.errors,
-                    'message': 'Form Submission Failed!',
-                }
-        return redirect('web:product')   
-     
+            print('--invalid---')
+            print('form errors:', form.errors)
+            print('formset errors:', formset.errors)
+            response = {
+                'status': False,
+                'form_errors': form.errors,
+                'formset_errors': formset.errors,
+                'message': 'Form Submission Failed!',
+            }
+            
+            context = {
+                'form': form,
+                'item_formset': formset
+            }
+            return render(request, 'web/product/product_create.html', context)
+
+class ProductDelete(View):
+    def post(self, request, *args, **kwargs):
+        id = kwargs.get('pk', None)
+        response = {}
+        obj = get_object_or_404(Product, id = id)
+        obj.delete()
+        
+        response['status'] = True
+        response['message'] = "Product deleted successfully"
+        return JsonResponse(response)
+
+
 class ProductUpdate(View):
     def get(self, request, *args, **kwargs):
         id = kwargs.get('pk', None)
         data = {}
         obj = get_object_or_404(Product, id = id)
         form = ProductForm(instance=obj)
-        context = {'form': form, 'id': id}
+        item_formset = MultipleImageInputFormFormSet(instance=obj)
+        context = {'form': form, 'id': id,'item_formset':item_formset}
         data['status'] = True
         data['title'] = 'Edit Product'
         return render(request, 'web/product/product_create.html', context)
@@ -88,3 +116,27 @@ class ProductUpdate(View):
             response['valid_form'] = False
             print('form',form.errors)
             return render(request, 'web/product/product_create.html', context)
+        
+
+class ProductImageView(View):
+    def get(self, request, *args, **kwargs):
+        products = ProductMedia.objects.all()
+        print("products",products)
+        context = {'products_images': products}
+        return render(request, 'web/product/product_image_list.html', context)
+    
+
+def search(request):
+    query = request.GET.get('search', '')
+
+    if query:
+        products = Product.objects.filter(
+            Q(name__icontains=query) |
+            Q(description__icontains=query) |
+            Q(price__icontains=query) |
+            Q(keyword__icontains=query)
+        ).distinct()
+    else:
+        products = Product.objects.all()
+
+    return render(request, 'web/product/search.html', {'products': products})

@@ -107,7 +107,6 @@ $(document).on('click', '.category-edit', function(event) {
 })
 
 
-// Function to delete curriculum
 function CategoryDelete(id) {
     var url = '/category/' + String(id) + '/delete/'
     swal({

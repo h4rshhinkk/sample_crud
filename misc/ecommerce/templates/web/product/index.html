@@ -1,11 +1,18 @@
 {% extends "web/layout/user_base.html" %} {% load static %} {% block body_block %}
 <div class="content-inner full-screen">
+    
+    <form method="GET" action="{% url 'web:search' %}">
+        {% csrf_token %}
+        <input type="text" name="search" placeholder="Search" value="{{ request.GET.search }}">
+        <button type="submit" class="button is-success">Search</button>
+    </form>
+    
     <div class="page-block">
         <input type="hidden" value="{% url 'web:product' %}" id="load_product">
         <div class="d-flex justify-content-between">
             <h1 class="page-block-title">Product List</h1>
             <div>
-                <a class="add-product" id="create_product" data-fancybox="" data-src="#product-popup"  data-url="{% url 'web:create_product' %}">
+                <a class="add-product"  href="{% url 'web:create_product' %}">
                     <button>+ Add Product</button>
                 </a>
             </div>
@@ -20,6 +27,7 @@
                         <th>Name</th>
                         <th>Description</th>
                         <th>Price</th>
+                        <th>Image</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -31,27 +39,7 @@
         </div>
     </div>
 
-    {% comment %} <div class="pagination-outer align-items-center justify-content-between d-flex" id="product-pagination">
-        {% include 'web/product/pagination.html' %}
-    </div> {% endcomment %}
-
-    <div>
-        <!-- Curriculum Add form starts-->
-        <div class="add-product" id="product-popup" style="display:none;">
-            <div class="pop-body" id="product-div">
-                <div class="formbg-inner">
-                    <form method="post" action="" class="ProductForm" id="ProductForm" name="ProductForm">
-                        {% csrf_token %}
-                        <h2 class="padding-bottom--15" id="popup_head">Add Product</h2>
-                        <div class="product-form" id="product-form-div">
-                            
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <!-- Curriculum Add form ends -->
-    </div>
+    
     
 </div>
 </div>

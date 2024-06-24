@@ -15,7 +15,7 @@
         {% endif %}  
 
         <div>
-            <form method="post" action="" id="productInputForm">
+            <form method="post" action="" id="productInputForm" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="product-form" id="product-out-form-div">
                     <div class="formbg-inner">
@@ -39,7 +39,7 @@
                                     <p class="text-danger mt-2 mb-0">{{ form.price.errors.as_text }}</p>
                                 </div>
                             </div>
-                                
+
                             <div class="col-lg-6">
 
                                 <div class="d-flex justify-content-between">
@@ -76,11 +76,12 @@
                                 </div>
 
                             </div>
-
+                            
                             <div class="field padding-bottom--24">
                                 <input class="product-submit" id="product-submit" type="submit" name="submit" value="Save">
                             </div>
-
+                            
+                            
                         </div>
                     </div>
                 </div>

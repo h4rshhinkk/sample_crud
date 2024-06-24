@@ -45,6 +45,26 @@
                         <span class="menu-item">Products</span>
                     </a>
                 </li>
+
+                <li class="sidebar-item">
+                    <a href="{% url 'web:product_image' %}" class="sidebar-link">
+                        <span class="menu-icon">
+                            <img class="icon-dark" src="{% static 'web/assets/images/dashboard.svg' %}">
+                            <img class="icon-white" src="{% static 'web/assets/images/dashboard-white.svg' %}">
+                        </span>
+                        <span class="menu-item">Product Image</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a href="{% url 'web:search' %}" class="sidebar-link">
+                        <span class="menu-icon">
+                            <img class="icon-dark" src="{% static 'web/assets/images/dashboard.svg' %}">
+                            <img class="icon-white" src="{% static 'web/assets/images/dashboard-white.svg' %}">
+                        </span>
+                        <span class="menu-item">Search</span>
+                    </a>
+                </li>
                 
 
                 {% comment %} <li class="sidebar-item">

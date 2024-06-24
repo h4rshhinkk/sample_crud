@@ -1,17 +1,32 @@
 {% load static %}
 {% for product in products %}
 <tr>
-    <td>{{forloop.counter0|add:products.start_index}}</td>
-    <td>{{product.category}}</td>
-    <td>{{product.name}}</td>
-    <td>{{product.description}}</td>
-    <td>{{product.price}}</td>
-
+    <td>{{ forloop.counter }}</td>
+    <td>{{ product.category }}</td>
+    <td>{{ product.name }}</td>
+    <td>{{ product.description }}</td>
+    <td>{{ product.price }}</td>
+    <td>
+        {% with default_media=product.get_default_media %}
+            {% if default_media %}
+                <img src="{{ default_media.image.url }}" class="card-img" style="height: 60px; width: 60px;" alt="icon">
+            {% else %}
+                <img src="{% static 'web/assets/images/default-avatar.jpg' %}" class="card-img" style="height: 60px; width: 60px;" alt="default icon">
+            {% endif %}
+        {% endwith %}
+    </td>
     <td>
         <a href="{% url 'web:update_product' product.id %}" class="product-edit" id="product-edit"  data-url="">
             <img src="{% static '/web/assets/images/edt_icon.svg' %}" alt="icon">
         </a>
-    </td>
 
+        <a href="javascript:;" onclick="ProductDelete({{ product.id }})">
+            <img src="{% static '/web/assets/images/dlt_icon.svg' %}" alt="icon">
+        </a>
+    </td>
+</tr>
+{% empty %}
 <tr>
+    <td colspan="7">No products found.</td>
+</tr>
 {% endfor %}
