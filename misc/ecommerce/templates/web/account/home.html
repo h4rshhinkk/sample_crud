@@ -5,6 +5,14 @@
     <div class="page-block">
         <div class="d-flex justify-content-between">
             <h1 class="page-block-title">Index</h1>
+
+            <h1 class="page-block-title" > Welcome,  {{request.user}}</h1>   
+
+            {% if request.user.is_superuser == True %}
+                <h1>aTrue</h1>
+            {% else %}
+                <h1>aFalse</h1>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -2,12 +2,19 @@ from django.urls import path
 from web.views.account import *
 from web.views.category import *
 from web.views.product import *
+from web.views.cart import *
 app_name = "web"
 
 # views
 urlpatterns = [
     # Landing Page
-    path("", Home.as_view(), name="home"),
+    path("", SignIn.as_view(), name="signin"),
+    path("home/", Home.as_view(), name="home"),
+
+    #Login Actions 
+    path("signin/", SignIn.as_view(), name="signin"),
+    path("signout/", SignOut.as_view(), name="signout"),
+    
 
     #Category
     path('category/', CategoryView.as_view(), name='category'),
@@ -34,6 +41,14 @@ urlpatterns = [
 
     #variant
     path('product/varaint/',ProductVariantView.as_view(), name='product_variant'),
-    path('product/variant/create/',ProductVariantCreate.as_view(),name='product_variant_create')
+    path('product/variant/create/',ProductVariantCreate.as_view(),name='product_variant_create'),
     
+
+    #shop
+    path('shop/',ShopView.as_view(),name="shop"),
+
+
+    #Cart
+    path("shop/cart/",CartView.as_view(), name="cart"),
+    path("shop/cart/add/",AddToCartView.as_view(), name="add_to_cart"),
 ]

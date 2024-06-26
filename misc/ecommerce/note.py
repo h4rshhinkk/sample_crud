@@ -24,3 +24,10 @@
 #             default_media = product.productmedia_set.filter(is_default=True).first()
 #             if default_media:
 #                 default_media_images.append(default_media.image)
+
+#https://www.redswitches.com/blog/drop-postgresql-database-examples/#HowToDropAPostgreSQLDatabase
+#https://www.redswitches.com/blog/creating-users-in-postgresql/#Grant-User-Privileges
+#https://docs.djangoproject.com/en/5.0/topics/auth/default/#topics-auth-creating-users
+
+# GRANT privilege_name ON ecommerce TO postgres;
+# grant all privileges on database ecommerce to harshin_user;

@@ -1,17 +1,17 @@
 from django import forms
-from web.models import Category,Product,ProductMedia,Variants
+from web.models import Category,Product,ProductMedia,ProductVariant
 from django.forms import inlineformset_factory
 
 
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['category','name','description','keyword']
+        fields = ['category','name','description','p_keyword',]
         widgets = {
             'category': forms.Select(attrs={'class': 'form-control','required':'True'}),
             'name': forms.TextInput(attrs={'class': 'form-control','required':'True'}),
             'description': forms.Textarea(attrs={'class': 'form-control','required':'True'}),
-            'keyword': forms.Textarea(attrs={'class': 'form-control','required':'True'}),
+            'p_keyword': forms.Textarea(attrs={'class': 'form-control','required':'True'}),
             
         }
 
@@ -35,7 +35,7 @@ MultipleImageInputFormFormSet = inlineformset_factory(
 
 class ProductVariantForm(forms.ModelForm):
     class Meta:
-          model = Variants
+          model = ProductVariant
           fields = ['product','variant_name','description','quantity','sale_price','image']
           widgets = {
                'product': forms.Select(attrs={'class': 'form-control','required':'True'}),

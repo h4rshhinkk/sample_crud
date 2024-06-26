@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction
 import json
 
-class CategoryView(View):
+class CategoryView(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         context, response = {}, {}
         page = int(request.GET.get('page', 1))
@@ -34,7 +34,7 @@ class CategoryView(View):
         context['form']  = CategoryForm()
         return renderfile(request, 'category', 'index', context)
     
-class CategoryCreate(View):
+class CategoryCreate(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         data = {}
         form = CategoryForm()
@@ -69,7 +69,7 @@ class CategoryCreate(View):
         return JsonResponse(response)
     
 
-class CategoryUpdate(View):
+class CategoryUpdate(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         id = kwargs.get('pk', None)
         data = {}
@@ -114,7 +114,7 @@ class CategoryUpdate(View):
             response['template'] = render_to_string('web/category/category_form.html', context, request=request)
             return JsonResponse(response)
         
-class CategoryDetail(View):
+class CategoryDetail(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         id = kwargs.get('pk', None)
         data = {}
@@ -125,7 +125,7 @@ class CategoryDetail(View):
         data['template'] = render_to_string('web/category/category_view.html', context, request=request)
         return JsonResponse(data)
     
-class CategoryDelete(View):
+class CategoryDelete(LoginRequiredMixin,View):
     def post(self, request, *args, **kwargs):
         id = kwargs.get('pk', None)
         response = {}

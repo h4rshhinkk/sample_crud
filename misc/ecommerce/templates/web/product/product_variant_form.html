@@ -15,7 +15,7 @@
         {% endif %}  
 
         <div>
-            <form method="post" id="productVariantInputForm" enctype="multipart/form-data">
+            <form method="post" action="{% url 'web:product_variant_create' %}" id="productVariantInputForm" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="product-variant-form" id="product-variant-form-div">
                     <div class="formbg-inner">
@@ -27,7 +27,7 @@
                                     <p class="text-danger mt-2 mb-0">{{ form.product.errors.as_text }}</p>
                                 </div>
                                 <div class="field padding-bottom--24">
-                                    <label for="tool_name">variant name</label> {{ form.variant_name }}
+                                    <label for="tool_name">title</label> {{ form.variant_name }}
                                     <p class="text-danger mt-2 mb-0">{{ form.variant_name.errors.as_text }}</p>
                                 </div>
                                 <div class="field padding-bottom--24">
@@ -42,7 +42,6 @@
                                     <label for="youtube_link">sale_price</label> {{ form.sale_price }}
                                     <p class="text-danger mt-2 mb-0">{{ form.sale_price.errors.as_text }}</p>
                                 </div>
-
                                 <div class="field padding-bottom--24">
                                     <label for="youtube_link">Image</label> {{ form.image }}
                                     <p class="text-danger mt-2 mb-0">{{ form.image.errors.as_text }}</p>
@@ -71,65 +70,73 @@
 <script src="{% static 'web/assets/js/formset.js' %}?v={% now 'd_m_yH:i:s' %}"></script>
 
 <script>
-    $(document).ready(function(){
-        $("#productVariantInputForm").validate({
-            rules: {
-                title: {
-                    required: true,
-                    minlength: 3
-                },
-                quantity: {
-                    required: true,
-                    minlength: 1, 
-                    digits: true 
-                },
-                sale_price: {
-                    required: true,
-                    number: true
-                },
-                description: {
-                    required: true,
-                    minlength: 10
-                }
+$(document).ready(function(){
+    $("#productVariantInputForm").validate({
+        rules: {
+            title: {
+                required: true,
+                minlength: 3
             },
-            messages: {
-                quantity: {
-                    digits: "Please enter a valid quantity"
-                },
-                sale_price: {
-                    number: "Please enter a valid price"
-                }
+            quantity: {
+                required: true,
+                minlength: 1, 
+                digits: true 
             },
-            submitHandler: function(form) {
-                var formData = new FormData(form); // Use FormData for file uploads
-                $.ajax({
-                    url: $(form).find('input[type=hidden]').val(),
-                    method: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    headers: { "X-CSRFToken": $("[name=csrfmiddlewaretoken]").val() },
-                    beforeSend: function () {
-                        $("#send-now-buttons").text("Saving...").attr("disabled", true);
-                    },
-                    success: function (response) {
-                        if (response.status) {
-                            alert(response.message);
-                            window.location.href = ""; // Redirect or update the page as needed
-                        } else {
-                            alert(response.message);
-                        }
-                    },
-                    error: function (errors) {
-                        console.log(errors);
-                    },
-                    complete: function () {
-                        $("#send-now-buttons").attr("disabled", false).text("Save");
-                    },
-                });
-                return false; // Prevent default form submission
+            sale_price: {
+                required: true,
+                number: true
+            },
+            description: {
+                required: true,
+                minlength: 10
             }
-        });
+        },
+        messages: {
+            quantity: {
+                digits: "Please enter a valid quantity"
+            },
+            sale_price: {
+                number: "Please enter a valid price"
+            }
+        },
+        submitHandler: function(form) {
+            var formData = $(form).serialize(); // Serialize form data
+            $.ajax({
+                url: {% url 'web:product_variant_create' %},
+                method: "POST",
+                data: formData,
+                headers: { "X-CSRFToken": $("[name=csrfmiddlewaretoken]").val() },
+                beforeSend: function () {
+                    $(".send-now-button").text("Saving...").attr("disabled", true);
+                },
+                success: function (response) {
+                    if (response.status == "success") {
+                        $(".msg_desc").text(response.message);
+                        $("#flash_message_success").attr("style", "display:block;");
+                        setTimeout(function () {
+                            $("#flash_message_success").attr("style", "display:none;");
+                        }, 3500);
+                        setTimeout(function () {
+                            window.location.href = "";
+                        }, 2000);
+                    } else {
+                        $(".msg_desc").text(response.message);
+                        $("#flash_message_error").attr("style", "display:block;");
+                        setTimeout(function () {
+                            $("#flash_message_error").attr("style", "display:none;");
+                        }, 3500);
+                    }
+                },
+                error: function (errors) {
+                    console.log(errors);
+                },
+                complete: function () {
+                    $(".send-now-button").attr("disabled", false).text("Save");
+                },
+            });
+            return false; // Prevent default form submission
+        }
     });
+});
 </script>
 {% endblock page_script %}

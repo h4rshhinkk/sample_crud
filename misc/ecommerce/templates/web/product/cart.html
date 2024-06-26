@@ -1,0 +1,100 @@
+{% extends "web/layout/user_base.html" %} {% load static %} {% block body_block %}
+<div class="content-inner full-screen">
+    <div class="page-block">
+        <main>
+            <div class="mb-4 pb-4"></div>
+            <section class="shop-checkout container">
+              <h2 class="page-title">Cart</h2>
+              {% if cart_items %}
+
+              <div class="shopping-cart">
+                <div class="cart-table__wrapper">
+                  <table class="cart-table">
+                    <thead>
+                      <tr>
+                        <th>Product</th>
+                        <th></th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for item in cart_items %}
+                      <tr>
+                        <td>
+                          <div class="shopping-cart__product-item">
+                           <a href=""><img loading="lazy" src="{{ item.product.image.url }}" width="120" height="120" alt="{{ item.product.name }}" /></a> 
+                          </div>
+                        </td>
+                        <td>
+                          <div class="shopping-cart__product-item__detail">
+                              <h3>{{ item.product.variant_name }}</h3>
+                            <h6>{{ item.product.product.name }}</h6>
+                            <ul class="shopping-cart__product-item__options">
+                              <li>Price:{{ item.product.sale_price|floatformat:0 }} INR</li>
+                            </ul>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="qty-control position-relative">
+                            <input type="number" id="product-qty{{ item.product.id }}" name="quantity" value="{{item.quantity}}" min="1" class="qty-control__number text-center" readonly>
+                            
+                          </div>
+                        </td>
+                        <td>
+                          <span class="shopping-cart__subtotal" id="product-price{{ item.product.id }}">{{item.get_total_price|floatformat:2}} INR</span>
+                        </td>
+                        <td>
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  
+                </div>
+                <div class="shopping-cart__totals-wrapper mt-10">
+                  <div class="sticky-content">
+                    <div class="shopping-cart__totals">
+                      
+                      <table class="cart-totals">
+                        <tbody>
+                        
+                          <tr>
+                            <th>Total</th>
+                            <td id="cart_total">{{cart_total|floatformat:2}} INR</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="mobile_fixed-btn_wrapper">
+                    <a href="">
+                      <div class="button-wrapper container mt-4">
+                        <button class="btn btn-primary btn-checkout">PROCEED TO CHECKOUT</button>
+                      </div>
+                    </a>
+                      {% else %}
+                      <img src="{% static 'web/assets/images/cart-empty.png' %}" alt="" width="100%">
+                      <a href="{% url 'web:shop' %}">
+                        <div class="button-wrapper container text-center">
+                          <button class="btn btn-primary btn-checkout">Go Shop</button>
+                        </div>
+                      </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </main>
+        
+          <div class="mb-5 pb-xl-5"></div>
+    </div>
+</div>
+</div>
+{% endblock body_block %} 
+{% block page_script %}
+<script src="{% static 'web/assets/js/product.js' %}?v={% now 'd_m_yH:i:s'%}"></script>
+<script src="{% static 'web/assets/js/cart.js' %}?v={% now 'd_m_yH:i:s'%}"></script>
+
+{% endblock page_script %}

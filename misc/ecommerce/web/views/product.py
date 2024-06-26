@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404,render,redirect
 from django.db import transaction
 from django.db.models import Q
 
-class ProductView(View):
+class ProductView(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         context, response = {}, {}
         page = int(request.GET.get('page', 1))
@@ -25,17 +25,16 @@ class ProductView(View):
         else:
             products = Product.objects.filter(is_active=True)
         
-        
         context['products'], context['current_page'] = products, page
         if is_ajax(request=request):
             response['status'] = True
             response['pagination'] = render_to_string("web/product/pagination.html",context=context,request=request)
-            response['template'] = render_to_string('web/product/product_list.html', context, request=request)
+            response['template'] = render_to_string("web/product/product_list.html", context, request=request)
             return JsonResponse(response)
         context['form']  = ProductForm()
         return renderfile(request, 'product', 'index', context)
     
-class ProductCreate(View):
+class ProductCreate(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         context = {
             'form': ProductForm(),
@@ -76,7 +75,7 @@ class ProductCreate(View):
             }
             return render(request, 'web/product/product_create.html', context)
 
-class ProductDelete(View):
+class ProductDelete(LoginRequiredMixin,View):
     def post(self, request, *args, **kwargs):
         id = kwargs.get('pk', None)
         response = {}
@@ -88,7 +87,7 @@ class ProductDelete(View):
         return JsonResponse(response)
 
 
-class ProductUpdate(View):
+class ProductUpdate(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         id = kwargs.get('pk', None)
         data = {}
@@ -118,7 +117,7 @@ class ProductUpdate(View):
             return render(request, 'web/product/product_create.html', context)
         
 
-class ProductImageView(View):
+class ProductImageView(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         products = ProductMedia.objects.all()
         print("products",products)
@@ -133,8 +132,7 @@ def search(request):
         products = Product.objects.filter(
             Q(name__icontains=query) |
             Q(description__icontains=query) |
-            Q(price__icontains=query) |
-            Q(keyword__icontains=query)
+            Q(p_keyword__icontains=query)
         ).distinct()
     else:
         products = Product.objects.all()
@@ -142,11 +140,11 @@ def search(request):
     return render(request, 'web/product/search.html', {'products': products})
 
 
-class ProductVariantView(View):
+class ProductVariantView(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         context, response = {}, {}
         page = int(request.GET.get('page', 1))
-        prod_variants = Variants.objects.all()
+        prod_variants = ProductVariant.objects.all()
         context['current_page'] =  page
         context = {'prod_variants': prod_variants}
         if is_ajax(request=request):
@@ -156,7 +154,7 @@ class ProductVariantView(View):
             return JsonResponse(response)
         return render(request, 'web/product/product_variant_index.html', context)
     
-class ProductVariantCreate(View):
+class ProductVariantCreate(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
         context = {
             'form': ProductVariantForm(),
@@ -166,20 +164,28 @@ class ProductVariantCreate(View):
             return JsonResponse({'html_form': render_to_string('web/product/product_variant_form.html', context, request=request)})
         return render(request, 'web/product/product_variant_form.html', context)
     
-    def post(self, request, *args, **kwargs):
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == "POST":
-            form = ProductVariantForm(request.POST, request.FILES)
+    def post(self,request, *args, **kwargs):
+        if is_ajax and request.method == "POST":
+            form = ProductVariantForm(request.POST,request.FILES)
             if form.is_valid():
                 data = form.save()
-                response = {
-                    'status': True,
+                print('data',data)
+                response={
+                    'status':True,
                     'message': 'Form submitted successfully!',
                 }
             else:
-                response = {
-                    'status': False,
-                    'form_errors': form.errors,
-                    'message': 'Form Submission Failed!',
-                }
-            return JsonResponse(response)
+                    print('--invalid---')
+                    print('form',form.errors)
+                    response = {
+                        'status': False,
+                        'form_errors': form.errors,
+                        'message': 'Form Submission Failed!',
+                    }
         return redirect('web:product_variant')
+    
+class ShopView(View):
+    def get(self, request, *args, **kwargs):
+        context = { 'products': ProductVariant.objects.all() }
+        return render(request, 'web/product/shop.html', context)
+        
