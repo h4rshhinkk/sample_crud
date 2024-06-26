@@ -1,0 +1,51 @@
+{% load static %}
+{% load my_filters %}
+{% block body_block %}
+
+{% if datas.has_other_pages %}
+    {% get_proper_elided_page_range datas.paginator datas.number as page_range %}
+    <div class="pagination-count">Showing <span>{{ datas.start_index }}</span> to <span>{{ datas.end_index }}</span> of <span>{{ datas.paginator.count }}</span> entries</div>
+    <input type="hidden" id="page" value="1" />
+    <input type="hidden" id="start_count" value="1" />
+    <ul class="pagination mt-0 ml-auto">
+        {% if datas.has_previous %}
+            <li>
+                <a href="javascript:void(0)" onclick="filter_region_data('{{ datas.previous_page_number }}');" page-val="{{ datas.previous_page_number }}">Previous</a>
+            </li>
+        {% else %}
+            <li class="disabled"><a href="#" tabindex="-1"></a></li>
+        {% endif %}
+
+        {% for i in page_range %}
+            {% if current_page  == i %}
+                <li  class="current">
+                    <a href="#">{{ i }}</a>
+                </li>
+            {% else %}
+                {% if i == datas.paginator.ELLIPSIS %}
+                    <li>
+                        {{ datas.paginator.ELLIPSIS }}
+                    </li>
+                {% else %}
+                    <li>
+                        <a  href="javascript:void(0)" onclick="filter_region_data('{{ i }}');" page-val="{{ i }}">{{ i }}</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        {% if datas.has_next %}
+            <li>
+                <a href="javascript:void(0)" onclick="filter_region_data('{{ datas.next_page_number }}');" page-val="{{ datas.next_page_number }}">Next</a>
+            </li>
+        {% else %}
+            <li class="disabled"><a href="#" tabindex="-1" ></a></li>
+        {% endif %}
+    </ul>
+{% else %}
+<div class="pagination-count">Showing <span>{{ datas.start_index }}</span> to <span>{{ datas.end_index }}</span> of <span>{{ datas.paginator.count }}</span> entries</div>
+    <ul class="pagination mt-0 ml-auto">
+        <li class="current"><a >1</a></li>  
+    </ul>
+</div>
+{% endif %}
+{% endblock %}

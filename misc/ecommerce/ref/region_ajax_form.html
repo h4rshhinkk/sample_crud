@@ -1,0 +1,33 @@
+{% load static %}
+<form action="" class="leave-req-form mt-20" name="region_edit_form" id="region_edit_form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <ul class="d-flex flex-column w-100 ">
+                    <li class="input_box">
+                        <label for="">Region Name<span class="text-danger">*</span></label>
+                        {{form.name}}
+                            <p class="invalid-field mt-2 mb-0">{{ form.name.errors.as_text  }}</p>
+                    </li>
+
+                    <li class="input_box">
+                        <label for="">Country<span class="text-danger">*</span></label>
+                        {{form.country}}
+                            <p class="invalid-field mt-2 mb-0">{{ form.country.errors.as_text  }}</p>
+                    </li>
+                   
+
+            </ul>
+            <div class="d-flex button-block justify-content-end mt-20">
+                <button  class="white-button" data-fancybox-close="">Cancel</button>
+                <button type="submit" class="gradient-button region-add"><span class="btn-helper"></span>Submit</button>
+            </div>
+        </form>
+
+
+<script>
+    $('.input-select').SumoSelect({
+        search: true,
+    })
+    var flt_country = $(".flt-country-select").val();
+    $('#id_country')[0].sumo.selectItem(flt_country);
+</script>
+

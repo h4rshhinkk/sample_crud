@@ -55,18 +55,25 @@
                         <span class="menu-item">Product Image</span>
                     </a>
                 </li>
-
+                
                 <li class="sidebar-item">
-                    <a href="{% url 'web:search' %}" class="sidebar-link">
+                    <a href="#" class="sidebar-link sub-link">
                         <span class="menu-icon">
-                            <img class="icon-dark" src="{% static 'web/assets/images/dashboard.svg' %}">
-                            <img class="icon-white" src="{% static 'web/assets/images/dashboard-white.svg' %}">
+                            <img class="icon-dark" src="{% static 'swift/assets/images/dashboard.svg' %}">
+                            <img class="icon-white" src="{% static 'swift/assets/images/dashboard-white.svg' %}">
                         </span>
-                        <span class="menu-item">Search</span>
+                        <span class="menu-item">Variant</span>
+                        <div class="drop-arrow">
+                            <span class="icon-Vector-2"></span>
+                        </div>
                     </a>
+                    <ul class="sub-menu">
+                        <li class="submenu-list">
+                            <a href="{% url 'web:product_variant' %}" class="submenu-item">Variants</a>
+                        </li>
+                    </ul>
                 </li>
                 
-
                 {% comment %} <li class="sidebar-item">
                     <a href="" class="sidebar-link">
                         <span class="menu-icon">

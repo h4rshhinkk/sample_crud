@@ -1,0 +1,28 @@
+{% load static %}
+{% if datas %}
+{% for data in datas %}
+<tr>
+   
+      <td><input type="hidden" id="options_{{data.id}}"/>{{forloop.counter}}</td>
+      <td id="country">{{data.country.name}}</td>
+      <td id="region" >{{data.name}}</td>      
+      {% if request.user.is_authenticated and 'higo.change_region' in perms %}
+      <td class="dropdown">
+        <span class="drop-parent">
+            <span class="icon-three_dot"></span>
+        <ul class="drop-list">
+            <li><a href="javascript:;" data-fancybox="" class="region-add-form" data-src="#role-pop" data-region-id = "{{data.id}}" data-url="{% url 'appdashboard:update_region' data.id %}">Edit</a></li>
+            <li class=""><a href="javascript:;" class="region-delete" data-id = "{{data.id}}" data-url="{% url 'appdashboard:delete_region' data.id %}">Delete</a></li>
+
+        </ul>
+        </span>
+    </td> 
+    {%endif%}
+  </tr>
+  
+{% endfor %}
+
+{% else %}
+<tr style="border-bottom: none"><td colspan="6"><li class="no-job-found" style="width: 100%; text-align: center">No Data Found</li></td></tr>
+{% endif %}
+

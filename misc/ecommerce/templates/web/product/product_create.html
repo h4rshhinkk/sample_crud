@@ -34,9 +34,10 @@
                                     <label for="tool_context">Description</label> {{ form.description }}
                                     <p class="text-danger mt-2 mb-0">{{ form.description.errors.as_text }}</p>
                                 </div>
+                                
                                 <div class="field padding-bottom--24">
-                                    <label for="youtube_link">Price</label> {{ form.price }}
-                                    <p class="text-danger mt-2 mb-0">{{ form.price.errors.as_text }}</p>
+                                    <label for="youtube_link">Keyword</label> {{ form.keyword }}
+                                    <p class="text-danger mt-2 mb-0">{{ form.keyword.errors.as_text }}</p>
                                 </div>
                             </div>
 
@@ -103,15 +104,24 @@
             prefix: formsetPrefix,
             formCssClass: 'dynamic-formset',
             added: function (row) {
-               
+                bindUniqueCheckboxHandler();
             }
         });
+
+        function bindUniqueCheckboxHandler() {
+            $('.dynamic-formset input[type="checkbox"]').change(function() {
+                
+                $('.dynamic-formset input[type="checkbox"]').not(this).prop('checked', false);
+            });
+        }
+        bindUniqueCheckboxHandler();
     });
    
     $(document).on('click', '.delete-row', function() {
         $(this).closest('.form_set_row').remove();
         $('.form_set_row').formset('update');
     });
+
 </script>
 
 {% endblock page_script %}

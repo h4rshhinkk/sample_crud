@@ -1,0 +1,90 @@
+{% extends "administrator/layout/user_base.html" %}
+{% load static %}
+{% block body_block %}
+
+<input type="hidden" value="{% url 'appdashboard:load_region_list' %}" id="load_region_list">
+
+<div class="content">
+	<div class="main-contents full-screen">
+		<div class="page-top">
+			<div>
+			<h4>Region</h4>
+			 <p><a href="{% url 'appdashboard:dashboard'%}">Dashboard</a><span>/<span><a href="" class="current-page">Region</a><span></p> 
+			</div>
+			<div class="top-btn-grp d-flex">
+				{% if request.user.is_authenticated and 'higo.add_region' in perms %}
+				<button  class="gradient-button region-add-form" href="javascript:;" data-fancybox="" data-url="{% url 'appdashboard:create_region'%}" data-src="#role-pop" ></span>Add New</button>
+				{%endif%}
+			</div>
+		 </div> 
+		 <div class="table-card-block table-settings mt-20">
+				
+					<div class="table-top d-flex flex-wrap justify-content-between align-items-center p-20">
+						
+						<h4>Region</h4>
+						<form action="" class="table-form">
+							{% comment %} <select class="SlectBox select-default" placeholder="this is placeholder" id="flt_country"
+							onchange="filter_region_data()">
+							<option value="">Select a Country</option>
+			  
+							{% for country in countries %}
+						  <option value="{{country.id}}">{{country.name}}</option>
+							
+						  {% endfor %}
+						  </select> {% endcomment %}
+							<div class="search-box" onkeyup="filter_region_data()">
+							  <input type="search" class="table-search" placeholder="Search Region name..." name="flt_title" id="flt_title">
+							  <img class="search-icon" src="{% static 'admin/assets/images/search_icon.svg' %}" alt="icon">
+						  </div>
+					  </form>
+					</div>
+					
+		  
+					
+					<div class="table_wrapper full_table_wrapper">
+						
+					<table class="table table-borderless table-space-between">
+						<thead>
+						  <tr class="fw-m table_head">
+							<td>Sl.No</td>
+							<td>Country</td>
+							<td>Region Name</td>							
+							{% if request.user.is_authenticated and 'higo.change_region' in perms %}
+							<td>Actions</td>
+							{%endif%}
+							
+						  </tr>
+						</thead>
+						<tbody class="tbody-white" id="load_data_region_list">
+
+						</tbody>
+					  </table>
+		
+			</div>
+		</div>
+		<div class="pagination-outer align-items-center justify-content-between d-flex mt-20" id="pagination_div"></div>
+
+	</div>
+</div>
+
+<!-- Popup -->
+<div class="new-job-popup" id="role-pop" style="display:none;">
+	<div class="pop-body">
+		<h5 id="region_heading">Add Region</h5>
+		<div id="region_add_div">
+
+		</div>
+	</div>
+</div>
+<!-- Popup Ends -->
+{% endblock body_block %}
+
+
+{% block page_script %}
+<script src="{% static 'admin/assets/js/store.js' %}?v={% now 'd_m_yH:i:s'%}"></script>
+<script>
+	$(function() {
+		filter_region_data()
+	})
+	</script>
+{% endblock %}

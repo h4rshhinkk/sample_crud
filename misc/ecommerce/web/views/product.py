@@ -140,3 +140,46 @@ def search(request):
         products = Product.objects.all()
 
     return render(request, 'web/product/search.html', {'products': products})
+
+
+class ProductVariantView(View):
+    def get(self, request, *args, **kwargs):
+        context, response = {}, {}
+        page = int(request.GET.get('page', 1))
+        prod_variants = Variants.objects.all()
+        context['current_page'] =  page
+        context = {'prod_variants': prod_variants}
+        if is_ajax(request=request):
+            response['status'] = True
+            response['pagination'] = render_to_string("web/product/pagination.html",context=context,request=request)
+            response['template'] = render_to_string('web/product/product_variant_list.html', context, request=request)
+            return JsonResponse(response)
+        return render(request, 'web/product/product_variant_index.html', context)
+    
+class ProductVariantCreate(View):
+    def get(self, request, *args, **kwargs):
+        context = {
+            'form': ProductVariantForm(),
+            'id': 0
+        }
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'html_form': render_to_string('web/product/product_variant_form.html', context, request=request)})
+        return render(request, 'web/product/product_variant_form.html', context)
+    
+    def post(self, request, *args, **kwargs):
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == "POST":
+            form = ProductVariantForm(request.POST, request.FILES)
+            if form.is_valid():
+                data = form.save()
+                response = {
+                    'status': True,
+                    'message': 'Form submitted successfully!',
+                }
+            else:
+                response = {
+                    'status': False,
+                    'form_errors': form.errors,
+                    'message': 'Form Submission Failed!',
+                }
+            return JsonResponse(response)
+        return redirect('web:product_variant')

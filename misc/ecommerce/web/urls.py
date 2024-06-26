@@ -30,6 +30,10 @@ urlpatterns = [
 
 
     #search
-    path('search/',search,name="search")
+    path('search/',search,name="search"),
 
+    #variant
+    path('product/varaint/',ProductVariantView.as_view(), name='product_variant'),
+    path('product/variant/create/',ProductVariantCreate.as_view(),name='product_variant_create')
+    
 ]

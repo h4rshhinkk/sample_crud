@@ -24,6 +24,3 @@
 #             default_media = product.productmedia_set.filter(is_default=True).first()
 #             if default_media:
 #                 default_media_images.append(default_media.image)
-
-
-#https://chatgpt.com/share/f692f21f-996c-4418-a2b3-ac3008728951

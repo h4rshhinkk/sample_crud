@@ -1,0 +1,18 @@
+{% load static %}
+{% for product in prod_variants %}
+<tr>
+    <td>{{forloop.counter}}</td>
+    <td>{{product.product}}</td>
+    <td>{{product.variant_name}}</td>
+    <td>{{product.description}}</td>
+    <td>{{product.quantity}}</td>
+    <td>{{product.sale_price}}</td>
+    <td>
+        {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img" style="height: 60px; width: 60px;" alt="icon">
+        {% else %}
+            <img src="{% static 'web/assets/images/default-avatar.jpg' %}" class="card-img" style="height: 60px; width: 60px;" alt="default icon">
+        {% endif %}
+    </td>
+<tr>
+{% endfor %}

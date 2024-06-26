@@ -1,17 +1,18 @@
 from django import forms
-from web.models import Category,Product,ProductMedia
+from web.models import Category,Product,ProductMedia,Variants
 from django.forms import inlineformset_factory
 
 
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['category','name','description','price']
+        fields = ['category','name','description','keyword']
         widgets = {
             'category': forms.Select(attrs={'class': 'form-control','required':'True'}),
             'name': forms.TextInput(attrs={'class': 'form-control','required':'True'}),
             'description': forms.Textarea(attrs={'class': 'form-control','required':'True'}),
-            'price': forms.NumberInput(attrs={'class': 'form-control','required':'True'}),
+            'keyword': forms.Textarea(attrs={'class': 'form-control','required':'True'}),
+            
         }
 
 class ProductMultipleImage(forms.ModelForm):
@@ -31,3 +32,17 @@ MultipleImageInputFormFormSet = inlineformset_factory(
     extra=2,
     can_delete=True,
 )
+
+class ProductVariantForm(forms.ModelForm):
+    class Meta:
+          model = Variants
+          fields = ['product','variant_name','description','quantity','sale_price','image']
+          widgets = {
+               'product': forms.Select(attrs={'class': 'form-control','required':'True'}),
+               'variant_name': forms.TextInput(attrs={'class': 'form-control','required':'True'}),
+               'description': forms.Textarea(attrs={'class': 'form-control','required':'True'}),
+               'quantity': forms.NumberInput(attrs={'class': 'form-control','required':'True'}),
+               'sale_price': forms.NumberInput(attrs={'class': 'form-control','required':'True'}),
+               'image': forms.FileInput(attrs={'class': 'form-control','required':'True'}),
+          }
+          
